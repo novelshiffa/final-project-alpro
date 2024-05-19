@@ -5,40 +5,9 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
-	"time"
 )
 
 const NMAX int = 1000
-
-// Type Declarations -- Start
-
-type Product struct {
-	Id       int
-	Name     string
-	Category string
-	Price    int
-	Stock    int
-}
-
-type Transaction struct {
-	Id       int
-	Time     time.Time
-	Type     string
-	Product  Product
-	Quantity int
-}
-
-type Products struct {
-	items  [NMAX]Product
-	length int
-}
-
-type Transactions struct {
-	items  [NMAX]Transaction
-	length int
-}
-
-// Type Declarations -- End
 
 // Global Variable Declarations -- Start
 
