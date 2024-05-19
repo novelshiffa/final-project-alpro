@@ -5,16 +5,24 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
-)
 
-const NMAX int = 1000
+	"atomicgo.dev/keyboard"
+	"atomicgo.dev/keyboard/keys"
+	"github.com/novelshiffa/final-project-alpro/types"
+)
 
 // Global Variable Declarations -- Start
 
-var products Products
-var transactions Transactions
+var products types.Product
+var transactions types.Transactions
+var menu types.Menu
+var stopLoop bool
 
 // Global Variable Declarations -- End
+
+func setStopLoop(val bool) {
+	stopLoop = val
+}
 
 func clearTerminal() {
 	var cmd *exec.Cmd
@@ -28,25 +36,43 @@ func clearTerminal() {
 }
 
 func main() {
-	// var i int
-	var choice int
+	var i int = 0
 
-	for {
+	menu.DefaultSelectedColor = "red"
+	menu.Items[0] = types.NewText("[1] Product")
+	menu.Items[1] = types.NewText("[2] Transactions")
+	menu.Items[2] = types.NewText("[3] Exit")
+
+	menu.Length = 3
+	menu.SetSelected(0)
+
+	var selected int
+
+	for !stopLoop {
 		clearTerminal()
 
-		fmt.Println("Select Context")
-		fmt.Println("[1] Product")
-		fmt.Println("[2] Transaction")
-		fmt.Println("[3] Exit")
-		fmt.Print("Your choice: ")
-		fmt.Scan(&choice)
+		menu.ShowAll()
 
-		if choice == 1 {
-			ProductHandler()
-		} else if choice == 2 {
-			TransactionHandler()
-		} else if choice == 3 {
-			fmt.Println("Thank you. Good bye.")
+		keyboard.Listen(func(key keys.Key) (stop bool, err error) {
+			if key.Code == keys.Up && i > 0 && i <= 2 {
+				i--
+				menu.SetSelected(i)
+			} else if key.Code == keys.Down && i >= 0 && i < 2 {
+				i++
+				menu.SetSelected(i)
+			}
+
+			if key.Code == keys.Enter {
+				selected = i
+				setStopLoop(true)
+				//return false, nil
+			}
+
+			return true, nil // Return false to continue listening else stop
+		})
+
+		if selected == 3 {
+			fmt.Println("Thank you. Goodbye!")
 			break
 		}
 	}

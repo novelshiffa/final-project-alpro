@@ -1,61 +1,23 @@
-package main
+package types
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
-// Methods for products
-func (p *Products) FindById(id int) int {
-	// Sequential search algorithm
-	for i := 0; i < p.length; i++ {
-		if p.items[i].Id == id {
-			return i
-		}
-	}
-
-	return -1
+type Transaction struct {
+	Id       int
+	Time     time.Time
+	Type     string
+	Product  Product
+	Quantity int
 }
 
-func (p *Products) AddNew(product Product) {
-	if p.length == NMAX {
-		panic("Max length reached.")
-	}
-
-	p.items[p.length] = product
-	p.length++
+type Transactions struct {
+	items  [NMAX]Transaction
+	length int
 }
 
-func (p *Products) FetchAll() {
-	for i := 0; i < p.length; i++ {
-		fmt.Println(p.items[i])
-	}
-}
-
-func (p *Products) Edit(id int, newProduct Product) bool {
-	var index int = p.FindById(id)
-
-	if index != -1 {
-		p.items[index] = newProduct
-
-		return true
-	}
-
-	return false
-}
-
-func (p *Products) Delete(id int) bool {
-	var index int = p.FindById(id)
-
-	if index != -1 {
-		for i := index; i < p.length; i++ {
-			p.items[index] = p.items[index+1]
-		}
-
-		return true
-	}
-
-	return false
-}
-
-// Methods for transactions
 func (t *Transactions) FindById(id int) int {
 	low, high := 0, t.length-1
 	for low <= high {
