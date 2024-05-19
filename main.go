@@ -8,6 +8,7 @@ import (
 
 	"atomicgo.dev/keyboard"
 	"atomicgo.dev/keyboard/keys"
+	"github.com/novelshiffa/final-project-alpro/handler"
 	"github.com/novelshiffa/final-project-alpro/types"
 )
 
@@ -71,7 +72,11 @@ func main() {
 			return true, nil // Return false to continue listening else stop
 		})
 
-		if selected == 3 {
+		if selected == 0 {
+			handler.ProductHandler()
+		} else if selected == 1 {
+			handler.TransactionHandler()
+		} else if selected == 2 {
 			fmt.Println("Thank you. Goodbye!")
 			break
 		}
