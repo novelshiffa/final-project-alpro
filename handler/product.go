@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/novelshiffa/final-project-alpro/types"
+	"github.com/novelshiffa/final-project-alpro/utils"
 )
 
 func ProductHandler(products *types.Products) bool {
@@ -57,11 +58,13 @@ func AddProductHandler(products *types.Products) bool {
 	menu.Listen(&selected, &stopLoop, &cls, func() {
 		switch selected {
 		case 0:
-			backToProducts = true
+			backToProducts = false
 		case 2:
 			backToProducts = true
+			stopLoop = true
 		}
 	}, func() {
+		utils.ClearTerminal()
 		products.ShowInTable()
 	})
 
