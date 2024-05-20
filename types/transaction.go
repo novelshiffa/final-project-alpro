@@ -14,17 +14,20 @@ type Transaction struct {
 }
 
 type Transactions struct {
-	items  [NMAX]Transaction
-	length int
+	Items  [NMAX]Transaction
+	Length int
 }
 
 func (t *Transactions) FindById(id int) int {
-	low, high := 0, t.length-1
+	// Binary search algorithm
+	// TODO: Check if sorted
+
+	low, high := 0, t.Length-1
 	for low <= high {
 		mid := (low + high) / 2
-		if t.items[mid].Id == id {
+		if t.Items[mid].Id == id {
 			return mid
-		} else if t.items[mid].Id < id {
+		} else if t.Items[mid].Id < id {
 			low = mid + 1
 		} else {
 			high = mid - 1
@@ -34,17 +37,17 @@ func (t *Transactions) FindById(id int) int {
 }
 
 func (t *Transactions) AddNew(transaction Transaction) {
-	if t.length == NMAX {
+	if t.Length == NMAX {
 		panic("Max length reached.")
 	}
 
-	t.items[t.length] = transaction
-	t.length++
+	t.Items[t.Length] = transaction
+	t.Length++
 }
 
 func (t *Transactions) FetchAll() {
-	for i := 0; i < t.length; i++ {
-		fmt.Println(t.items[i])
+	for i := 0; i < t.Length; i++ {
+		fmt.Println(t.Items[i])
 	}
 }
 
@@ -52,7 +55,7 @@ func (t *Transactions) Edit(id int, newTransaction Transaction) bool {
 	var index int = t.FindById(id)
 
 	if index != -1 {
-		t.items[index] = newTransaction
+		t.Items[index] = newTransaction
 
 		return true
 	}
@@ -64,8 +67,8 @@ func (t *Transactions) Delete(id int) bool {
 	var index int = t.FindById(id)
 
 	if index != -1 {
-		for i := index; i < t.length; i++ {
-			t.items[index] = t.items[index+1]
+		for i := index; i < t.Length; i++ {
+			t.Items[index] = t.Items[index+1]
 		}
 
 		return true

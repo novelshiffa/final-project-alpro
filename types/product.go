@@ -11,14 +11,14 @@ type Product struct {
 }
 
 type Products struct {
-	items  [NMAX]Product
-	length int
+	Items  [NMAX]Product
+	Length int
 }
 
 func (p *Products) FindById(id int) int {
 	// Sequential search algorithm
-	for i := 0; i < p.length; i++ {
-		if p.items[i].Id == id {
+	for i := 0; i < p.Length; i++ {
+		if p.Items[i].Id == id {
 			return i
 		}
 	}
@@ -27,17 +27,17 @@ func (p *Products) FindById(id int) int {
 }
 
 func (p *Products) AddNew(product Product) {
-	if p.length == NMAX {
+	if p.Length == NMAX {
 		panic("Max length reached.")
 	}
 
-	p.items[p.length] = product
-	p.length++
+	p.Items[p.Length] = product
+	p.Length++
 }
 
 func (p *Products) FetchAll() {
-	for i := 0; i < p.length; i++ {
-		fmt.Println(p.items[i])
+	for i := 0; i < p.Length; i++ {
+		fmt.Println(p.Items[i])
 	}
 }
 
@@ -45,7 +45,7 @@ func (p *Products) Edit(id int, newProduct Product) bool {
 	var index int = p.FindById(id)
 
 	if index != -1 {
-		p.items[index] = newProduct
+		p.Items[index] = newProduct
 
 		return true
 	}
@@ -57,8 +57,8 @@ func (p *Products) Delete(id int) bool {
 	var index int = p.FindById(id)
 
 	if index != -1 {
-		for i := index; i < p.length; i++ {
-			p.items[index] = p.items[index+1]
+		for i := index; i < p.Length; i++ {
+			p.Items[index] = p.Items[index+1]
 		}
 
 		return true
