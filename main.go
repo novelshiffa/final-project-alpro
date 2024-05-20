@@ -9,12 +9,19 @@ import (
 
 // Global Variable Declarations -- Start
 
-var products types.Product
+var products types.Products
 var transactions types.Transactions
 
 // Global Variable Declarations -- End
 
 func main() {
+	products = types.Products{
+		Items: [types.NMAX]types.Product{
+			{Id: 1, Name: "Product1", Category: "Category1", Price: 100, Stock: 10},
+			{Id: 2, Name: "Product2", Category: "Category2", Price: 200, Stock: 20},
+		},
+		Length: 2,
+	}
 	var stopLoop bool
 	var menu types.Menu
 
@@ -28,16 +35,18 @@ func main() {
 
 	var selected int
 
-	menu.Listen(&selected, &stopLoop, func() {
+	var cls bool = true
+
+	menu.Listen(&selected, &stopLoop, &cls, func() {
 		switch selected {
 		case 0:
-			stopLoop = !handler.ProductHandler()
+			stopLoop = !handler.ProductHandler(&products)
 		case 1:
 			stopLoop = !handler.TransactionHandler()
 		case 2:
 			stopLoop = true
 			fmt.Println("Thank you. Good bye!")
 		}
-	})
+	}, func() {})
 
 }

@@ -4,7 +4,7 @@ import (
 	"github.com/novelshiffa/final-project-alpro/types"
 )
 
-func ProductHandler() bool {
+func ProductHandler(products *types.Products) bool {
 	var stopLoop bool
 	var menu types.Menu
 
@@ -23,12 +23,47 @@ func ProductHandler() bool {
 
 	var selected int
 
-	menu.Listen(&selected, &stopLoop, func() {
+	var cls bool = true
+
+	menu.Listen(&selected, &stopLoop, &cls, func() {
 		switch selected {
+		case 1:
+			backToHome = AddProductHandler(products)
 		case 4:
 			backToHome = true
 		}
-	})
+	}, func() {})
 
 	return backToHome
+}
+
+func AddProductHandler(products *types.Products) bool {
+	var stopLoop bool
+	var menu types.Menu
+
+	menu.DefaultSelectedColor = "blue"
+	menu.Items[0] = types.NewText("[1] Back to /products")
+	menu.Items[1] = types.NewText("[2] Exit")
+
+	menu.Length = 2
+	menu.SetSelected(0)
+
+	var backToProducts bool = false
+
+	var selected int
+
+	var cls bool = false
+
+	menu.Listen(&selected, &stopLoop, &cls, func() {
+		switch selected {
+		case 0:
+			backToProducts = true
+		case 2:
+			backToProducts = true
+		}
+	}, func() {
+		products.ShowInTable()
+	})
+
+	return backToProducts
 }

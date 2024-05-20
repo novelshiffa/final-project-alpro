@@ -23,12 +23,14 @@ func TransactionHandler() bool {
 
 	var selected int
 
-	menu.Listen(&selected, &stopLoop, func() {
+	var cls bool = true
+
+	menu.Listen(&selected, &stopLoop, &cls, func() {
 		switch selected {
 		case 4:
 			backToHome = true
 		}
-	})
+	}, func() {})
 
 	return backToHome
 }

@@ -30,10 +30,12 @@ func (m *Menu) ShowAll() {
 	}
 }
 
-func (m *Menu) Listen(selector *int, stopLoop *bool, action func()) {
-
+func (m *Menu) Listen(selector *int, stopLoop *bool, clear *bool, action func(), prevAction func()) {
+	prevAction()
 	for {
-		utils.ClearTerminal()
+		if *clear {
+			utils.ClearTerminal()
+		}
 
 		(*m).ShowAll()
 
@@ -55,10 +57,6 @@ func (m *Menu) Listen(selector *int, stopLoop *bool, action func()) {
 
 		if *stopLoop {
 			action()
-
-			if *stopLoop {
-				break
-			}
 		}
 	}
 }

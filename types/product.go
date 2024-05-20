@@ -15,6 +15,18 @@ type Products struct {
 	Length int
 }
 
+func (p *Products) ShowInTable() {
+	// Table header
+	fmt.Printf("%-5s %-20s %-15s %-10s %-10s\n", "ID", "Name", "Category", "Price", "Stock")
+	fmt.Println("--------------------------------------------------------------")
+
+	// Print each product
+	for i := 0; i < p.Length; i++ {
+		product := p.Items[i]
+		fmt.Printf("%-5d %-20s %-15s %-10d %-10d\n", product.Id, product.Name, product.Category, product.Price, product.Stock)
+	}
+}
+
 func (p *Products) FindById(id int) int {
 	// Sequential search algorithm
 	for i := 0; i < p.Length; i++ {
