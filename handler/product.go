@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"fmt"
+
 	"github.com/novelshiffa/final-project-alpro/types"
 	"github.com/novelshiffa/final-project-alpro/utils"
 )
@@ -28,6 +30,13 @@ func ProductHandler(products *types.Products) bool {
 
 	menu.Listen(&selected, &stopLoop, &cls, func() {
 		switch selected {
+		case 0:
+			if AddNewProduct(products) {
+				fmt.Println("OK")
+			}
+
+			stopLoop = false
+
 		case 1:
 			stopLoop = !ViewAllProducts(products)
 		case 4:
@@ -38,8 +47,27 @@ func ProductHandler(products *types.Products) bool {
 	return backToHome
 }
 
-func AddNewProduct(products *types.Products, product *types.Product) bool {
-	products.Items[products.Length] = *product
+func AddNewProduct(products *types.Products) bool {
+	if products.Length == types.NMAX {
+		panic("Penuh")
+	}
+
+	utils.ClearTerminal()
+	var p types.Product
+
+	fmt.Print("Product name: ")
+	fmt.Scanln(&p.Name)
+
+	fmt.Print("Product price: ")
+	fmt.Scanln(&p.Price)
+
+	fmt.Print("Product stock: ")
+	fmt.Scanln(&p.Stock)
+
+	fmt.Print("Product category: ")
+	fmt.Scanln(&p.Category)
+
+	products.Items[products.Length] = p
 	products.Length++
 
 	return true
