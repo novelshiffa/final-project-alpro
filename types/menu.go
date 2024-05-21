@@ -59,7 +59,9 @@ func (m *Menu) Listen(selector *int, stopLoop *bool, clear *bool, action func(),
 		if *stopLoop {
 			action()
 
-			break
+			if *stopLoop {
+				break
+			}
 		}
 	}
 }

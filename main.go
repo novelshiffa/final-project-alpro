@@ -25,6 +25,8 @@ func main() {
 	var stopLoop bool
 	var menu types.Menu
 
+	products.Delete(1)
+
 	menu.DefaultSelectedColor = "blue"
 	menu.Items[0] = types.NewText("[1] Product")
 	menu.Items[1] = types.NewText("[2] Transactions")

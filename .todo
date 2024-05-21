@@ -1,4 +1,7 @@
 [ ] "Add auto-increment"
-[ ] "Don't edit using replacing algorithm"
 [ ] "Add sorting"
 [ ] "Add isSorted"
+[ ] "Add find in menu"
+[ ] "Add optional data dummy"
+[ ] "Add detail each attr"
+[ ] "Add string limit"

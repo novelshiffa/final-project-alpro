@@ -6,7 +6,7 @@ import (
 )
 
 func ProductHandler(products *types.Products) bool {
-	var stopLoop bool
+	var stopLoop bool = false
 	var menu types.Menu
 
 	menu.DefaultSelectedColor = "blue"
@@ -29,7 +29,7 @@ func ProductHandler(products *types.Products) bool {
 	menu.Listen(&selected, &stopLoop, &cls, func() {
 		switch selected {
 		case 1:
-			backToHome = AddProductHandler(products)
+			stopLoop = !ViewAllProducts(products)
 		case 4:
 			backToHome = true
 		}
@@ -38,7 +38,14 @@ func ProductHandler(products *types.Products) bool {
 	return backToHome
 }
 
-func AddProductHandler(products *types.Products) bool {
+func AddNewProduct(products *types.Products, product *types.Product) bool {
+	products.Items[products.Length] = *product
+	products.Length++
+
+	return true
+}
+
+func ViewAllProducts(products *types.Products) bool {
 	var stopLoop bool
 	var menu types.Menu
 
@@ -58,9 +65,8 @@ func AddProductHandler(products *types.Products) bool {
 	menu.Listen(&selected, &stopLoop, &cls, func() {
 		switch selected {
 		case 0:
-			backToProducts = false
-		case 2:
 			backToProducts = true
+		case 2:
 			stopLoop = true
 		}
 	}, func() {
