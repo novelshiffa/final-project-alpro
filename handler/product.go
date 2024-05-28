@@ -7,15 +7,15 @@ import (
 	"github.com/novelshiffa/final-project-alpro/utils"
 )
 
-func ProductHandler(products *types.Products) bool {
+func ItemHandler(items *types.Items) bool {
 	var stopLoop bool = false
 	var menu types.Menu
 
 	menu.DefaultSelectedColor = "blue"
-	menu.Items[0] = types.NewText("[1] Add new product")
-	menu.Items[1] = types.NewText("[2] View all products")
-	menu.Items[2] = types.NewText("[3] Edit product")
-	menu.Items[3] = types.NewText("[4] Delete product")
+	menu.Items[0] = types.NewText("[1] Add new item")
+	menu.Items[1] = types.NewText("[2] View all items")
+	menu.Items[2] = types.NewText("[3] Edit item")
+	menu.Items[3] = types.NewText("[4] Delete item")
 	menu.Items[4] = types.NewText("[5] Back home")
 	menu.Items[5] = types.NewText("[6] Exit")
 
@@ -31,14 +31,20 @@ func ProductHandler(products *types.Products) bool {
 	menu.Listen(&selected, &stopLoop, &cls, func() {
 		switch selected {
 		case 0:
-			if AddNewProduct(products) {
+			if AddNewItem(items) {
 				fmt.Println("OK")
 			}
 
 			stopLoop = false
 
 		case 1:
-			stopLoop = !ViewAllProducts(products)
+			stopLoop = !ViewAllItems(items)
+		case 2:
+			if EditItem(items) {
+				fmt.Println()
+			}
+
+			stopLoop = false
 		case 4:
 			backToHome = true
 		}
@@ -47,44 +53,41 @@ func ProductHandler(products *types.Products) bool {
 	return backToHome
 }
 
-func AddNewProduct(products *types.Products) bool {
-	if products.Length == types.NMAX {
+func AddNewItem(items *types.Items) bool {
+	if items.Length == types.NMAX {
 		panic("Penuh")
 	}
 
 	utils.ClearTerminal()
-	var p types.Product
+	var p types.Item
 
-	fmt.Print("Product name: ")
+	fmt.Print("Item name: ")
 	fmt.Scanln(&p.Name)
 
-	fmt.Print("Product price: ")
-	fmt.Scanln(&p.Price)
+	InputInteger("Item price: ", &p.Price, true)
 
-	fmt.Print("Product stock: ")
-	fmt.Scanln(&p.Stock)
+	InputInteger("Item stock: ", &p.Stock, true)
 
-	fmt.Print("Product category: ")
+	fmt.Print("Item category: ")
 	fmt.Scanln(&p.Category)
 
-	products.Items[products.Length] = p
-	products.Length++
+	_, err := items.AddNew(p)
 
-	return true
+	return err == nil
 }
 
-func ViewAllProducts(products *types.Products) bool {
+func ViewAllItems(items *types.Items) bool {
 	var stopLoop bool
 	var menu types.Menu
 
 	menu.DefaultSelectedColor = "blue"
-	menu.Items[0] = types.NewText("[1] Back to /products")
+	menu.Items[0] = types.NewText("[1] Back to /items")
 	menu.Items[1] = types.NewText("[2] Exit")
 
 	menu.Length = 2
 	menu.SetSelected(0)
 
-	var backToProducts bool = false
+	var backToItems bool = false
 
 	var selected int
 
@@ -93,14 +96,58 @@ func ViewAllProducts(products *types.Products) bool {
 	menu.Listen(&selected, &stopLoop, &cls, func() {
 		switch selected {
 		case 0:
-			backToProducts = true
+			backToItems = true
 		case 2:
 			stopLoop = true
 		}
 	}, func() {
 		utils.ClearTerminal()
-		products.ShowInTable()
+		items.ShowInTable()
 	})
 
-	return backToProducts
+	return backToItems
+}
+
+func EditItem(items *types.Items) bool {
+	var id int
+	var found bool
+
+	var errText = types.NewText("Item not found. Try again.")
+	errText.SetColor("red")
+
+	for !found {
+		InputInteger("Enter item id (0 to exit): ", &id, true)
+
+		if id == 0 {
+			return true
+		} else {
+			id = items.FindById(id)
+
+			if id != -1 {
+				found = true
+			} else {
+				fmt.Println(errText.Colored)
+			}
+		}
+	}
+	var temp string
+
+	fmt.Print("Enter new name (Press Enter if you don't want to edit this attribute): ")
+	fmt.Scanln(&temp)
+
+	if temp != "" {
+		items.Items[id].Name = temp
+	}
+
+	fmt.Print("Enter new category (Press Enter if you don't want to edit this attribute): ")
+	fmt.Scanln(&temp)
+
+	if temp != "" {
+		items.Items[id].Category = temp
+	}
+
+	InputInteger("Enter new price (Press Enter if you don't want to edit this attribute): ", &items.Items[id].Price, false)
+	InputInteger("Enter new stock (Press Enter if you don't want to edit this attribute): ", &items.Items[id].Stock, false)
+
+	return true
 }

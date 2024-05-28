@@ -3,7 +3,9 @@ package utils
 import (
 	"os"
 	"os/exec"
+	"regexp"
 	"runtime"
+	"strconv"
 )
 
 func ClearTerminal() {
@@ -15,4 +17,15 @@ func ClearTerminal() {
 	}
 	cmd.Stdout = os.Stdout
 	cmd.Run()
+}
+
+func IsNumericString(input string) bool {
+	pattern := `^\d+$`
+	re := regexp.MustCompile(pattern)
+
+	return re.MatchString(input)
+}
+
+func StringToInt(s string) (int, error) {
+	return strconv.Atoi(s)
 }

@@ -9,7 +9,7 @@ type Transaction struct {
 	Id       int
 	Time     time.Time
 	Type     string
-	Product  Product
+	Item     Item
 	Quantity int
 }
 

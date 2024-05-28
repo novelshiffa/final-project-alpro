@@ -1,8 +1,11 @@
 package types
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
-type Product struct {
+type Item struct {
 	Id       int
 	Name     string
 	Category string
@@ -10,24 +13,24 @@ type Product struct {
 	Stock    int
 }
 
-type Products struct {
-	Items  [NMAX]Product
+type Items struct {
+	Items  [NMAX]Item
 	Length int
 }
 
-func (p *Products) ShowInTable() {
+func (p *Items) ShowInTable() {
 	// Table header
 	fmt.Printf("%-5s %-20s %-15s %-10s %-10s\n", "ID", "Name", "Category", "Price", "Stock")
 	fmt.Println("--------------------------------------------------------------")
 
-	// Print each product
+	// Print each item
 	for i := 0; i < p.Length; i++ {
-		product := p.Items[i]
-		fmt.Printf("%-5d %-20s %-15s %-10d %-10d\n", product.Id, product.Name, product.Category, product.Price, product.Stock)
+		item := p.Items[i]
+		fmt.Printf("%-5d %-20s %-15s %-10d %-10d\n", item.Id, item.Name, item.Category, item.Price, item.Stock)
 	}
 }
 
-func (p *Products) FindById(id int) int {
+func (p *Items) FindById(id int) int {
 	// Sequential search algorithm
 	for i := 0; i < p.Length; i++ {
 		if p.Items[i].Id == id {
@@ -38,34 +41,37 @@ func (p *Products) FindById(id int) int {
 	return -1
 }
 
-func (p *Products) AddNew(product Product) {
+func (p *Items) AddNew(item Item) (bool, error) {
 	if p.Length == NMAX {
-		panic("Max length reached.")
+		return false, errors.New("max length reached")
 	}
 
-	p.Items[p.Length] = product
+	p.Items[p.Length] = item
+	p.Items[p.Length].Id = p.Length + 1
 	p.Length++
+
+	return true, nil
 }
 
-func (p *Products) FetchAll() {
+func (p *Items) FetchAll() {
 	for i := 0; i < p.Length; i++ {
 		fmt.Println(p.Items[i])
 	}
 }
 
-func (p *Products) Edit(id int, newProduct Product) bool {
+func (p *Items) Edit(id int, newItem Item) (bool, error) {
 	var index int = p.FindById(id)
 
 	if index != -1 {
-		p.Items[index] = newProduct
+		p.Items[index] = newItem
 
-		return true
+		return true, nil
 	}
 
-	return false
+	return false, errors.New("something went wrong")
 }
 
-func (p *Products) Delete(id int) bool {
+func (p *Items) Delete(id int) (bool, error) {
 	var index int = p.FindById(id)
 
 	if index != -1 {
@@ -73,8 +79,8 @@ func (p *Products) Delete(id int) bool {
 			p.Items[index] = p.Items[index+1]
 		}
 
-		return true
+		return true, nil
 	}
 
-	return false
+	return false, errors.New("something went wrong")
 }
