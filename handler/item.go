@@ -34,16 +34,18 @@ func ItemHandler(items *types.Items) bool {
 			if AddNewItem(items) {
 				fmt.Println("OK")
 			}
-
 			stopLoop = false
-
 		case 1:
 			stopLoop = !ViewAllItems(items)
 		case 2:
 			if EditItem(items) {
 				fmt.Println()
 			}
-
+			stopLoop = false
+		case 3:
+			if DeleteItem(items) {
+				fmt.Println()
+			}
 			stopLoop = false
 		case 4:
 			backToHome = true
@@ -137,6 +139,7 @@ func EditItem(items *types.Items) bool {
 
 	if temp != "" {
 		items.Items[id].Name = temp
+		temp = ""
 	}
 
 	fmt.Print("Enter new category (Press Enter if you don't want to edit this attribute): ")
@@ -144,10 +147,38 @@ func EditItem(items *types.Items) bool {
 
 	if temp != "" {
 		items.Items[id].Category = temp
+		temp = ""
 	}
 
 	InputInteger("Enter new price (Press Enter if you don't want to edit this attribute): ", &items.Items[id].Price, false)
 	InputInteger("Enter new stock (Press Enter if you don't want to edit this attribute): ", &items.Items[id].Stock, false)
 
 	return true
+}
+
+func DeleteItem(items *types.Items) bool {
+	var id int
+	var found bool
+
+	var errText = types.NewText("Item not found. Try again.")
+	errText.SetColor("red")
+
+	for !found {
+		InputInteger("Enter item id (0 to exit): ", &id, true)
+
+		if id == 0 {
+			return true
+		} else {
+			id = items.FindById(id)
+
+			if id != -1 {
+				found = true
+			} else {
+				fmt.Println(errText.Colored)
+			}
+		}
+	}
+
+	_, err := items.Delete(id)
+	return err != nil || true
 }

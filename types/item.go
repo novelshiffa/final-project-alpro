@@ -72,15 +72,13 @@ func (p *Items) Edit(id int, newItem Item) (bool, error) {
 }
 
 func (p *Items) Delete(id int) (bool, error) {
-	var index int = p.FindById(id)
-
-	if index != -1 {
-		for i := index; i < p.Length; i++ {
-			p.Items[index] = p.Items[index+1]
-		}
-
-		return true, nil
+	for i := id; i < p.Length; i++ {
+		p.Items[id] = p.Items[id+1]
 	}
 
-	return false, errors.New("something went wrong")
+	p.Length--
+
+	return true, nil
+
+	// return false, errors.New("something went wrong")
 }
