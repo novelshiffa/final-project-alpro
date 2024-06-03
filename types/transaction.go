@@ -18,6 +18,15 @@ type Transactions struct {
 	Length int
 }
 
+func (transactions *Transactions) ShowInTable() {
+	fmt.Printf("%-5s %-20s %-10s %-20s %-10s %-10s\n", "ID", "Time", "Type", "Item Name", "Quantity", "Price")
+	fmt.Println("-------------------------------------------------------------------------------------------")
+	for i := 0; i < transactions.Length; i++ {
+		t := transactions.Items[i]
+		fmt.Printf("%-5d %-20s %-10s %-20s %-10d %-10.2d\n", t.Id, t.Time.Format("2006-01-02 15:04:05"), t.Type, t.Item.Name, t.Quantity, t.Item.Price)
+	}
+}
+
 func (t *Transactions) FindById(id int) int {
 	// Binary search algorithm
 	// TODO: Check if sorted

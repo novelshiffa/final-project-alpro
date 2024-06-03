@@ -43,7 +43,7 @@ func main() {
 		case 0:
 			stopLoop = !handler.ItemHandler(&items)
 		case 1:
-			stopLoop = !handler.TransactionHandler()
+			stopLoop = !handler.TransactionHandler(&transactions)
 		case 2:
 			stopLoop = true
 			fmt.Println("Thank you. Good bye!")

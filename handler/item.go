@@ -28,6 +28,8 @@ func ItemHandler(items *types.Items) bool {
 
 	var cls bool = true
 
+	var txt types.Text = types.NewText("Items")
+
 	menu.Listen(&selected, &stopLoop, &cls, func() {
 		switch selected {
 		case 0:
@@ -50,7 +52,9 @@ func ItemHandler(items *types.Items) bool {
 		case 4:
 			backToHome = true
 		}
-	}, func() {})
+	}, func() {
+		fmt.Println(txt.Colored)
+	})
 
 	return backToHome
 }
@@ -60,7 +64,6 @@ func AddNewItem(items *types.Items) bool {
 		panic("Penuh")
 	}
 
-	utils.ClearTerminal()
 	var p types.Item
 
 	fmt.Print("Item name: ")
