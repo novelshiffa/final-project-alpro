@@ -18,15 +18,33 @@ type Items struct {
 	Length int
 }
 
+func (items *Items) getMaxCharOnName() int {
+	max := 20
+	for i := 0; i < items.Length; i++ {
+		if len(items.Items[i].Name) > max {
+			max = len(items.Items[i].Name)
+		}
+	}
+
+	return max
+}
+
 func (p *Items) ShowInTable() {
+	// Get the maximum name length
+	nameWidth := p.getMaxCharOnName()
+
+	// Construct the format string dynamically
+	headerFormat := fmt.Sprintf("%%-5s %%-%ds %%-15s %%-10s %%-10s\n", nameWidth)
+	rowFormat := fmt.Sprintf("%%-5d %%-%ds %%-15s %%-10d %%-10d\n", nameWidth)
+
 	// Table header
-	fmt.Printf("%-5s %-20s %-15s %-10s %-10s\n", "ID", "Name", "Category", "Price", "Stock")
+	fmt.Printf(headerFormat, "ID", "Name", "Category", "Price", "Stock")
 	fmt.Println("--------------------------------------------------------------")
 
 	// Print each item
 	for i := 0; i < p.Length; i++ {
 		item := p.Items[i]
-		fmt.Printf("%-5d %-20s %-15s %-10d %-10d\n", item.Id, item.Name, item.Category, item.Price, item.Stock)
+		fmt.Printf(rowFormat, item.Id, item.Name, item.Category, item.Price, item.Stock)
 	}
 }
 
