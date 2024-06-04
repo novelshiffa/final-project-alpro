@@ -1,6 +1,7 @@
 package types
 
 import (
+	"errors"
 	"fmt"
 	"time"
 )
@@ -61,8 +62,8 @@ func (t *Transactions) FetchAll() {
 	}
 }
 
-func (t *Transactions) Edit(id int, newTransaction Transaction) bool {
-	var index int = t.FindById(id)
+func (t *Transactions) Edit(idx int, newTransaction Transaction) bool {
+	var index int = t.FindById(idx)
 
 	if index != -1 {
 		t.Items[index] = newTransaction
@@ -73,16 +74,18 @@ func (t *Transactions) Edit(id int, newTransaction Transaction) bool {
 	return false
 }
 
-func (t *Transactions) Delete(id int) bool {
-	var index int = t.FindById(id)
-
-	if index != -1 {
-		for i := index; i < t.Length; i++ {
-			t.Items[index] = t.Items[index+1]
-		}
-
-		return true
+func (t *Transactions) Delete(idx int) (bool, error) {
+	if idx < 0 || idx >= t.Length {
+		return false, errors.New("invalid id")
 	}
 
-	return false
+	for i := idx; i < t.Length; i++ {
+		t.Items[i] = t.Items[i+1]
+	}
+
+	t.Length--
+
+	return true, nil
+
+	// return false, errors.New("something went wrong")
 }

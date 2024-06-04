@@ -133,14 +133,66 @@ func EditTransaction(t *types.Transactions, i *types.Items) bool {
 		}
 	}
 
-	InputTime("Transaction time (current value is "+t.Items[index].Time.String()+"): ", &t.Items[index].Time, false)
-	InputTransactionType("Type of transaction (current value is "+t.Items[index].Type+"): ", &t.Items[index].Type, false)
-	InputItem("Enter item id (current value is "+fmt.Sprint(t.Items[index].Item.Id)+"): ", &t.Items[index].Item, false, i)
-	InputInteger("Enter quantity (current value is "+fmt.Sprint(t.Items[index].Quantity)+"): ", &t.Items[index].Quantity, false)
+	// Input transaction time
+	InputTime(
+		fmt.Sprint(types.NewText(t.Items[index].Time.String()).Colored)+
+			"Transaction time (Press Enter if you don't want to edit this attribute): ",
+		&t.Items[index].Time,
+		false,
+	)
+
+	// Input transaction type
+	InputTransactionType(
+		fmt.Sprint(types.NewText(t.Items[index].Type).Colored)+
+			"Type of transaction (current value is (Press Enter if you don't want to edit this attribute): ",
+		&t.Items[index].Type,
+		false,
+	)
+
+	// Input item id
+	InputItem(
+		fmt.Sprint(types.NewText(fmt.Sprint(t.Items[index].Item.Id)).Colored)+
+			"Enter item id (Press Enter if you don't want to edit this attribute): ",
+		&t.Items[index].Item,
+		false,
+		i,
+	)
+
+	// Input quantity
+	InputInteger(
+		fmt.Sprint(types.NewText(fmt.Sprint(t.Items[index].Quantity)).Colored)+
+			"Enter quantity (Press Enter if you don't want to edit this attribute): ",
+		&t.Items[index].Quantity,
+		false,
+	)
 
 	return true
 }
 
 func DeleteTransaction(t *types.Transactions) bool {
-	return true
+	var id int
+	var index int
+	var found bool
+
+	var errText = types.NewText("Item not found. Try again.")
+	errText.SetColor("red")
+
+	for !found {
+		InputInteger("Enter item id (0 to exit): ", &id, true)
+
+		if id == 0 {
+			return true
+		} else {
+			index = t.FindById(id)
+
+			if index != -1 {
+				found = true
+			} else {
+				fmt.Println(errText.Colored)
+			}
+		}
+	}
+
+	_, err := t.Delete(index)
+	return err == nil || true
 }

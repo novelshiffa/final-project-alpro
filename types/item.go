@@ -59,8 +59,8 @@ func (p *Items) FetchAll() {
 	}
 }
 
-func (p *Items) Edit(id int, newItem Item) (bool, error) {
-	var index int = p.FindById(id)
+func (p *Items) Edit(idx int, newItem Item) (bool, error) {
+	var index int = p.FindById(idx)
 
 	if index != -1 {
 		p.Items[index] = newItem
@@ -71,9 +71,13 @@ func (p *Items) Edit(id int, newItem Item) (bool, error) {
 	return false, errors.New("something went wrong")
 }
 
-func (p *Items) Delete(id int) (bool, error) {
-	for i := id; i < p.Length; i++ {
-		p.Items[id] = p.Items[id+1]
+func (p *Items) Delete(idx int) (bool, error) {
+	if idx < 0 || idx >= p.Length {
+		return false, errors.New("invalid id")
+	}
+
+	for i := idx; i < p.Length; i++ {
+		p.Items[i] = p.Items[i+1]
 	}
 
 	p.Length--

@@ -162,6 +162,7 @@ func EditItem(items *types.Items) bool {
 
 func DeleteItem(items *types.Items) bool {
 	var id int
+	var index int
 	var found bool
 
 	var errText = types.NewText("Item not found. Try again.")
@@ -173,9 +174,9 @@ func DeleteItem(items *types.Items) bool {
 		if id == 0 {
 			return true
 		} else {
-			id = items.FindById(id)
+			index = items.FindById(id)
 
-			if id != -1 {
+			if index != -1 {
 				found = true
 			} else {
 				fmt.Println(errText.Colored)
@@ -183,6 +184,6 @@ func DeleteItem(items *types.Items) bool {
 		}
 	}
 
-	_, err := items.Delete(id)
+	_, err := items.Delete(index)
 	return err != nil || true
 }
