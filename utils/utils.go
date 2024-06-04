@@ -5,7 +5,6 @@ import (
 	"os/exec"
 	"regexp"
 	"runtime"
-	"strconv"
 )
 
 func ClearTerminal() {
@@ -19,13 +18,26 @@ func ClearTerminal() {
 	cmd.Run()
 }
 
-func IsNumericString(input string) bool {
-	pattern := `^\d+$`
+func IsValidDateTimeFormat(dateTime string) bool {
+	// Define the regex pattern for the datetime format
+	// ^ - start of the string
+	// \d{4} - exactly 4 digits for the year
+	// - - hyphen separator
+	// \d{2} - exactly 2 digits for the month
+	// - - hyphen separator
+	// \d{2} - exactly 2 digits for the day
+	// \s - space separator
+	// \d{2} - exactly 2 digits for the hour
+	// : - colon separator
+	// \d{2} - exactly 2 digits for the minute
+	// : - colon separator
+	// \d{2} - exactly 2 digits for the second
+	// $ - end of the string
+	pattern := `^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$`
+
+	// Compile the regex
 	re := regexp.MustCompile(pattern)
 
-	return re.MatchString(input)
-}
-
-func StringToInt(s string) (int, error) {
-	return strconv.Atoi(s)
+	// Match the input string against the regex pattern
+	return re.MatchString(dateTime)
 }

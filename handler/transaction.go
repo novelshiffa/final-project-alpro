@@ -7,7 +7,7 @@ import (
 	"github.com/novelshiffa/final-project-alpro/utils"
 )
 
-func TransactionHandler(t *types.Transactions) bool {
+func TransactionHandler(t *types.Transactions, i *types.Items) bool {
 	var stopLoop bool = false
 	var menu types.Menu
 
@@ -33,7 +33,7 @@ func TransactionHandler(t *types.Transactions) bool {
 	menu.Listen(&selected, &stopLoop, &cls, func() {
 		switch selected {
 		case 0:
-			if CreateNewTransaction(t) {
+			if CreateNewTransaction(t, i) {
 				fmt.Println("OK")
 			}
 
@@ -60,24 +60,19 @@ func TransactionHandler(t *types.Transactions) bool {
 	return backToHome
 }
 
-func CreateNewTransaction(t *types.Transactions) bool {
+func CreateNewTransaction(t *types.Transactions, i *types.Items) bool {
 	if t.Length == types.NMAX {
 		panic("Penuh")
 	}
 
-	// var transaction types.Transaction
+	var transaction types.Transaction
 
-	// fmt.Print("Transaction name: ")
-	// fmt.Scanln(&p.Name)
+	InputTime("Transaction time: ", &transaction.Time, true)
+	InputTransactionType("Type of transaction: ", &transaction.Type, true)
+	InputItem("Enter item id: ", &transaction.Item, true, i)
+	InputInteger("Enter quantity: ", &transaction.Quantity, true)
 
-	// InputInteger("Item price: ", &p.Price, true)
-
-	// InputInteger("Item stock: ", &p.Stock, true)
-
-	// fmt.Print("Item category: ")
-	// fmt.Scanln(&p.Category)
-
-	// _, err := items.AddNew(p)
+	t.CreateNew(transaction)
 
 	return true
 }

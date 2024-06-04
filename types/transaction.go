@@ -45,12 +45,13 @@ func (t *Transactions) FindById(id int) int {
 	return -1
 }
 
-func (t *Transactions) AddNew(transaction Transaction) {
+func (t *Transactions) CreateNew(transaction Transaction) {
 	if t.Length == NMAX {
 		panic("Max length reached.")
 	}
 
 	t.Items[t.Length] = transaction
+	t.Items[t.Length].Id = t.Length + 1
 	t.Length++
 }
 

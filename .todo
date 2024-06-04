@@ -4,6 +4,7 @@
 [ ] "Add optional data dummy"
 [ ] "Add detail each attr"
 [ ] "Add string limit"
+[ ] "Change to prodecure in C (CRUD) (optional)"
 [ ] "Rename files from product to item"
 [ ] "Remove edit in types"
 [ ] "Add title on each action"

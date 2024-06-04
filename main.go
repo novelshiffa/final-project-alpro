@@ -48,7 +48,6 @@ func main() {
 		Length: 10,
 	}
 
-	var stopLoop bool
 	var menu types.Menu
 
 	menu.DefaultSelectedColor = "blue"
@@ -59,8 +58,8 @@ func main() {
 	menu.Length = 3
 	menu.SetSelected(0)
 
-	var selected int
-
+	var selected int = 0
+	var stopLoop bool = false
 	var cls bool = true
 
 	menu.Listen(&selected, &stopLoop, &cls, func() {
@@ -68,7 +67,7 @@ func main() {
 		case 0:
 			stopLoop = !handler.ItemHandler(&items)
 		case 1:
-			stopLoop = !handler.TransactionHandler(&transactions)
+			stopLoop = !handler.TransactionHandler(&transactions, &items)
 		case 2:
 			stopLoop = true
 			fmt.Println("Thank you. Good bye!")
