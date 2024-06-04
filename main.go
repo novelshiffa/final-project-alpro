@@ -53,7 +53,7 @@ func main() {
 	menu.DefaultSelectedColor = "blue"
 	menu.Items[0] = types.NewText("[1] Item")
 	menu.Items[1] = types.NewText("[2] Transactions")
-	menu.Items[2] = types.NewText("[3] Exit")
+	menu.Items[2] = types.NewText("[3] Exit program")
 
 	menu.Length = 3
 	menu.SetSelected(0)

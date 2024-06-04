@@ -17,7 +17,7 @@ func ItemHandler(items *types.Items) bool {
 	menu.Items[2] = types.NewText("[3] Edit item")
 	menu.Items[3] = types.NewText("[4] Delete item")
 	menu.Items[4] = types.NewText("[5] Back home")
-	menu.Items[5] = types.NewText("[6] Exit")
+	menu.Items[5] = types.NewText("[6] Exit program")
 
 	menu.Length = 6
 	menu.SetSelected(0)
@@ -87,7 +87,7 @@ func ViewAllItems(items *types.Items) bool {
 
 	menu.DefaultSelectedColor = "blue"
 	menu.Items[0] = types.NewText("[1] Back to /items")
-	menu.Items[1] = types.NewText("[2] Exit")
+	menu.Items[1] = types.NewText("[2] Exit program")
 
 	menu.Length = 2
 	menu.SetSelected(0)

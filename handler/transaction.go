@@ -17,7 +17,7 @@ func TransactionHandler(t *types.Transactions, i *types.Items) bool {
 	menu.Items[2] = types.NewText("[3] Edit transaction")
 	menu.Items[3] = types.NewText("[4] Delete transaction")
 	menu.Items[4] = types.NewText("[5] Back home")
-	menu.Items[5] = types.NewText("[6] Exit")
+	menu.Items[5] = types.NewText("[6] Exit program")
 
 	menu.Length = 6
 	menu.SetSelected(0)
@@ -83,7 +83,7 @@ func ViewAllTransactions(t *types.Transactions) bool {
 
 	menu.DefaultSelectedColor = "blue"
 	menu.Items[0] = types.NewText("[1] Back to /items")
-	menu.Items[1] = types.NewText("[2] Exit")
+	menu.Items[1] = types.NewText("[2] Exit program")
 
 	menu.Length = 2
 	menu.SetSelected(0)
@@ -134,8 +134,15 @@ func EditTransaction(t *types.Transactions, i *types.Items) bool {
 	}
 
 	// Input transaction time
+	var OldValueFormat = func(oldValue string) string {
+		text := types.NewText("[!] Current value: " + oldValue + "\n")
+		text.SetColor("green")
+
+		return text.Colored
+	}
+
 	InputTime(
-		fmt.Sprint(types.NewText(t.Items[index].Time.String()).Colored)+
+		OldValueFormat(t.Items[index].Time.String())+
 			"Transaction time (Press Enter if you don't want to edit this attribute): ",
 		&t.Items[index].Time,
 		false,
@@ -143,15 +150,15 @@ func EditTransaction(t *types.Transactions, i *types.Items) bool {
 
 	// Input transaction type
 	InputTransactionType(
-		fmt.Sprint(types.NewText(t.Items[index].Type).Colored)+
-			"Type of transaction (current value is (Press Enter if you don't want to edit this attribute): ",
+		OldValueFormat(t.Items[index].Type)+
+			"Type of transaction (Press Enter if you don't want to edit this attribute): ",
 		&t.Items[index].Type,
 		false,
 	)
 
 	// Input item id
 	InputItem(
-		fmt.Sprint(types.NewText(fmt.Sprint(t.Items[index].Item.Id)).Colored)+
+		OldValueFormat(fmt.Sprint(t.Items[index].Item.Id))+
 			"Enter item id (Press Enter if you don't want to edit this attribute): ",
 		&t.Items[index].Item,
 		false,
@@ -160,7 +167,7 @@ func EditTransaction(t *types.Transactions, i *types.Items) bool {
 
 	// Input quantity
 	InputInteger(
-		fmt.Sprint(types.NewText(fmt.Sprint(t.Items[index].Quantity)).Colored)+
+		OldValueFormat(fmt.Sprint(t.Items[index].Quantity))+
 			"Enter quantity (Press Enter if you don't want to edit this attribute): ",
 		&t.Items[index].Quantity,
 		false,
