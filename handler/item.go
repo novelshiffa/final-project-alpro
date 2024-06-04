@@ -115,6 +115,7 @@ func ViewAllItems(items *types.Items) bool {
 
 func EditItem(items *types.Items) bool {
 	var id int
+	var index int
 	var found bool
 
 	var errText = types.NewText("Item not found. Try again.")
@@ -126,9 +127,9 @@ func EditItem(items *types.Items) bool {
 		if id == 0 {
 			return true
 		} else {
-			id = items.FindById(id)
+			index = items.FindById(id)
 
-			if id != -1 {
+			if index != -1 {
 				found = true
 			} else {
 				fmt.Println(errText.Colored)
@@ -141,7 +142,7 @@ func EditItem(items *types.Items) bool {
 	fmt.Scanln(&temp)
 
 	if temp != "" {
-		items.Items[id].Name = temp
+		items.Items[index].Name = temp
 		temp = ""
 	}
 
@@ -149,12 +150,12 @@ func EditItem(items *types.Items) bool {
 	fmt.Scanln(&temp)
 
 	if temp != "" {
-		items.Items[id].Category = temp
+		items.Items[index].Category = temp
 		temp = ""
 	}
 
-	InputInteger("Enter new price (Press Enter if you don't want to edit this attribute): ", &items.Items[id].Price, false)
-	InputInteger("Enter new stock (Press Enter if you don't want to edit this attribute): ", &items.Items[id].Stock, false)
+	InputInteger("Enter new price (Press Enter if you don't want to edit this attribute): ", &items.Items[index].Price, false)
+	InputInteger("Enter new stock (Press Enter if you don't want to edit this attribute): ", &items.Items[index].Stock, false)
 
 	return true
 }

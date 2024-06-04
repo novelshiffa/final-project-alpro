@@ -41,7 +41,7 @@ func TransactionHandler(t *types.Transactions, i *types.Items) bool {
 		case 1:
 			stopLoop = !ViewAllTransactions(t)
 		case 2:
-			if EditTransaction(t) {
+			if EditTransaction(t, i) {
 				fmt.Println()
 			}
 			stopLoop = false
@@ -109,7 +109,35 @@ func ViewAllTransactions(t *types.Transactions) bool {
 	return backToItems
 }
 
-func EditTransaction(t *types.Transactions) bool {
+func EditTransaction(t *types.Transactions, i *types.Items) bool {
+	var id int
+	var index int
+	var found bool
+
+	var errText = types.NewText("Item not found. Try again.")
+	errText.SetColor("red")
+
+	for !found {
+		InputInteger("Enter item id (0 to exit): ", &id, true)
+
+		if id == 0 {
+			return true
+		} else {
+			index = t.FindById(id)
+
+			if index != -1 {
+				found = true
+			} else {
+				fmt.Println(errText.Colored)
+			}
+		}
+	}
+
+	InputTime("Transaction time (current value is "+t.Items[index].Time.String()+"): ", &t.Items[index].Time, false)
+	InputTransactionType("Type of transaction (current value is "+t.Items[index].Type+"): ", &t.Items[index].Type, false)
+	InputItem("Enter item id (current value is "+fmt.Sprint(t.Items[index].Item.Id)+"): ", &t.Items[index].Item, false, i)
+	InputInteger("Enter quantity (current value is "+fmt.Sprint(t.Items[index].Quantity)+"): ", &t.Items[index].Quantity, false)
+
 	return true
 }
 
