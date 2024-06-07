@@ -33,22 +33,15 @@ func TransactionHandler(t *types.Transactions, i *types.Items) bool {
 	menu.Listen(&selected, &stopLoop, &cls, func() {
 		switch selected {
 		case 0:
-			if CreateNewTransaction(t, i) {
-				fmt.Println("OK")
-			}
-
+			fmt.Println("OK")
 			stopLoop = false
 		case 1:
 			stopLoop = !ViewAllTransactions(t)
 		case 2:
-			if EditTransaction(t, i) {
-				fmt.Println()
-			}
+			EditTransaction(t, i)
 			stopLoop = false
 		case 3:
-			if DeleteTransaction(t) {
-				fmt.Println()
-			}
+			DeleteTransaction(t)
 			stopLoop = false
 		case 4:
 			backToHome = true
@@ -60,7 +53,7 @@ func TransactionHandler(t *types.Transactions, i *types.Items) bool {
 	return backToHome
 }
 
-func CreateNewTransaction(t *types.Transactions, i *types.Items) bool {
+func CreateNewTransaction(t *types.Transactions, i *types.Items) {
 	if t.Length == types.NMAX {
 		panic("Penuh")
 	}
@@ -73,8 +66,6 @@ func CreateNewTransaction(t *types.Transactions, i *types.Items) bool {
 	InputInteger("Enter quantity: ", &transaction.Quantity, true)
 
 	t.CreateNew(transaction)
-
-	return true
 }
 
 func ViewAllTransactions(t *types.Transactions) bool {
@@ -109,7 +100,7 @@ func ViewAllTransactions(t *types.Transactions) bool {
 	return backToItems
 }
 
-func EditTransaction(t *types.Transactions, i *types.Items) bool {
+func EditTransaction(t *types.Transactions, i *types.Items) {
 	var id int
 	var index int
 	var found bool
@@ -121,7 +112,7 @@ func EditTransaction(t *types.Transactions, i *types.Items) bool {
 		InputInteger("Enter item id (0 to exit): ", &id, true)
 
 		if id == 0 {
-			return true
+			return
 		} else {
 			index = t.FindById(id)
 
@@ -136,7 +127,7 @@ func EditTransaction(t *types.Transactions, i *types.Items) bool {
 	// Input transaction time
 	var OldValueFormat = func(oldValue string) string {
 		text := types.NewText("[!] Current value: " + oldValue + "\n")
-		text.SetColor("green")
+		text.SetColor("blue")
 
 		return text.Colored
 	}
@@ -172,11 +163,9 @@ func EditTransaction(t *types.Transactions, i *types.Items) bool {
 		&t.Items[index].Quantity,
 		false,
 	)
-
-	return true
 }
 
-func DeleteTransaction(t *types.Transactions) bool {
+func DeleteTransaction(t *types.Transactions) {
 	var id int
 	var index int
 	var found bool
@@ -188,7 +177,7 @@ func DeleteTransaction(t *types.Transactions) bool {
 		InputInteger("Enter item id (0 to exit): ", &id, true)
 
 		if id == 0 {
-			return true
+			return
 		} else {
 			index = t.FindById(id)
 
@@ -199,7 +188,4 @@ func DeleteTransaction(t *types.Transactions) bool {
 			}
 		}
 	}
-
-	_, err := t.Delete(index)
-	return err == nil || true
 }

@@ -1,7 +1,6 @@
 package types
 
 import (
-	"errors"
 	"fmt"
 )
 
@@ -59,16 +58,14 @@ func (p *Items) FindById(id int) int {
 	return -1
 }
 
-func (p *Items) AddNew(item Item) (bool, error) {
+func (p *Items) AddNew(item Item) {
 	if p.Length == NMAX {
-		return false, errors.New("max length reached")
+		panic("Something went wrong")
 	}
 
 	p.Items[p.Length] = item
 	p.Items[p.Length].Id = p.Length + 1
 	p.Length++
-
-	return true, nil
 }
 
 func (p *Items) FetchAll() {
@@ -77,9 +74,9 @@ func (p *Items) FetchAll() {
 	}
 }
 
-func (p *Items) Delete(idx int) (bool, error) {
+func (p *Items) Delete(idx int) {
 	if idx < 0 || idx >= p.Length {
-		return false, errors.New("invalid id")
+		panic("Index out of range.")
 	}
 
 	for i := idx; i < p.Length; i++ {
@@ -87,8 +84,4 @@ func (p *Items) Delete(idx int) (bool, error) {
 	}
 
 	p.Length--
-
-	return true, nil
-
-	// return false, errors.New("something went wrong")
 }

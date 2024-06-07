@@ -1,7 +1,6 @@
 package types
 
 import (
-	"errors"
 	"fmt"
 	"time"
 )
@@ -62,9 +61,9 @@ func (t *Transactions) FetchAll() {
 	}
 }
 
-func (t *Transactions) Delete(idx int) (bool, error) {
+func (t *Transactions) Delete(idx int) {
 	if idx < 0 || idx >= t.Length {
-		return false, errors.New("invalid id")
+		panic("Index out of range.")
 	}
 
 	for i := idx; i < t.Length; i++ {
@@ -72,8 +71,4 @@ func (t *Transactions) Delete(idx int) (bool, error) {
 	}
 
 	t.Length--
-
-	return true, nil
-
-	// return false, errors.New("something went wrong")
 }

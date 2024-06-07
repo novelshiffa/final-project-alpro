@@ -33,21 +33,15 @@ func ItemHandler(items *types.Items) bool {
 	menu.Listen(&selected, &stopLoop, &cls, func() {
 		switch selected {
 		case 0:
-			if AddNewItem(items) {
-				fmt.Println("OK")
-			}
+			AddNewItem(items)
 			stopLoop = false
 		case 1:
 			stopLoop = !ViewAllItems(items)
 		case 2:
-			if EditItem(items) {
-				fmt.Println()
-			}
+			EditItem(items)
 			stopLoop = false
 		case 3:
-			if DeleteItem(items) {
-				fmt.Println()
-			}
+			DeleteItem(items)
 			stopLoop = false
 		case 4:
 			backToHome = true
@@ -59,7 +53,7 @@ func ItemHandler(items *types.Items) bool {
 	return backToHome
 }
 
-func AddNewItem(items *types.Items) bool {
+func AddNewItem(items *types.Items) {
 	if items.Length == types.NMAX {
 		panic("Penuh")
 	}
@@ -76,9 +70,7 @@ func AddNewItem(items *types.Items) bool {
 	fmt.Print("Item category: ")
 	fmt.Scanln(&p.Category)
 
-	_, err := items.AddNew(p)
-
-	return err == nil
+	items.AddNew(p)
 }
 
 func ViewAllItems(items *types.Items) bool {
@@ -113,7 +105,7 @@ func ViewAllItems(items *types.Items) bool {
 	return backToItems
 }
 
-func EditItem(items *types.Items) bool {
+func EditItem(items *types.Items) {
 	var id int
 	var index int
 	var found bool
@@ -125,7 +117,7 @@ func EditItem(items *types.Items) bool {
 		InputInteger("Enter item id (0 to exit): ", &id, true)
 
 		if id == 0 {
-			return true
+			return
 		} else {
 			index = items.FindById(id)
 
@@ -157,11 +149,9 @@ func EditItem(items *types.Items) bool {
 
 	InputInteger("Enter new price (Press Enter if you don't want to edit this attribute): ", &items.Items[index].Price, false)
 	InputInteger("Enter new stock (Press Enter if you don't want to edit this attribute): ", &items.Items[index].Stock, false)
-
-	return true
 }
 
-func DeleteItem(items *types.Items) bool {
+func DeleteItem(items *types.Items) {
 	var id int
 	var index int
 	var found bool
@@ -173,7 +163,7 @@ func DeleteItem(items *types.Items) bool {
 		InputInteger("Enter item id (0 to exit): ", &id, true)
 
 		if id == 0 {
-			return true
+			return
 		} else {
 			index = items.FindById(id)
 
@@ -185,6 +175,5 @@ func DeleteItem(items *types.Items) bool {
 		}
 	}
 
-	_, err := items.Delete(index)
-	return err != nil || true
+	items.Delete(index)
 }
