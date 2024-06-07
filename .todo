@@ -1,8 +1,4 @@
 [ ] "Add sorting"
 [ ] "Add isSorted"
-[ ] "Add stopper while add data"
-[ ] "Add optional data dummy"
 [ ] "Add detail each attr"
-[ ] "Add string limit"
 [ ] "Change to prodecure in C (CRUD) (optional)"
-[ ] "Remove edit in types"
