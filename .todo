@@ -1,2 +1,4 @@
 [ ] "Add sorting"
 [ ] "Add isSorted"
+[ ] "Bug on edit transaction date"
+[ ] "Fix undefined column name while sorting/searching"

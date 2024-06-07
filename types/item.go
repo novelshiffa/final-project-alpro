@@ -85,3 +85,60 @@ func (p *Items) Delete(idx int) {
 
 	p.Length--
 }
+
+func (p *Items) SortBy(columnName string, ascending bool) Items {
+	// Selection Sort
+	/*
+		Id       int
+		Name     string
+		Category string
+		Price    int
+		Stock    int
+	*/
+
+	if !(columnName == "Id" || columnName == "Name" || columnName == "Category" || columnName == "Price" || columnName == "Stock") {
+		panic("Undefined column name.")
+	}
+
+	var items Items
+
+	for i := 0; i < p.Length; i++ {
+		items.Items[i] = p.Items[i]
+	}
+
+	items.Length = p.Length
+
+	for i := 0; i < items.Length-1; i++ {
+		key := i
+
+		for j := i + 1; j < p.Length; j++ {
+			switch columnName {
+			case "Id":
+				if items.Items[j].Id < items.Items[key].Id && ascending || items.Items[j].Id > items.Items[key].Id && !ascending {
+					key = j
+				}
+			case "Name":
+				if items.Items[j].Name < items.Items[key].Name && ascending || items.Items[j].Name > items.Items[key].Name && !ascending {
+					key = j
+				}
+			case "Category":
+				if items.Items[j].Category < items.Items[key].Category && ascending || items.Items[j].Category > items.Items[key].Category && !ascending {
+					key = j
+				}
+			case "Price":
+				if items.Items[j].Price < items.Items[key].Price && ascending || items.Items[j].Price > items.Items[key].Price && !ascending {
+					key = j
+				}
+			case "Stock":
+				if items.Items[j].Stock < items.Items[key].Stock && ascending || items.Items[j].Stock > items.Items[key].Stock && !ascending {
+					key = j
+				}
+			}
+
+		}
+
+		items.Items[i], items.Items[key] = items.Items[key], items.Items[i]
+	}
+
+	return items
+}

@@ -36,7 +36,7 @@ func ItemHandler(items *types.Items) bool {
 			AddNewItem(items)
 			stopLoop = false
 		case 1:
-			stopLoop = !ViewAllItems(items)
+			stopLoop = !ViewAllItems(items, "SELECT * FROM items")
 		case 2:
 			EditItem(items)
 			stopLoop = false
@@ -73,32 +73,56 @@ func AddNewItem(items *types.Items) {
 	items.AddNew(p)
 }
 
-func ViewAllItems(items *types.Items) bool {
+func ViewAllItems(items *types.Items, title string) bool {
+	var titleText = types.NewText(title)
+	titleText.SetColor("green")
+
 	var stopLoop bool
 	var menu types.Menu
 
 	menu.DefaultSelectedColor = "blue"
-	menu.Items[0] = types.NewText("[1] Back to /items")
-	menu.Items[1] = types.NewText("[2] Exit program")
+	menu.Items[0] = types.NewText("[1] Sort by column")
+	menu.Items[1] = types.NewText("[2] Back to /items")
+	menu.Items[2] = types.NewText("[3] Exit program")
 
-	menu.Length = 2
+	menu.Length = 3
 	menu.SetSelected(0)
 
 	var backToItems bool = false
-
 	var selected int
-
 	var cls bool = false
 
 	menu.Listen(&selected, &stopLoop, &cls, func() {
 		switch selected {
 		case 0:
+			var itemsCopy types.Items
+			var column string
+			var asc bool
+
+			fmt.Print("Which column? ")
+			fmt.Scanln(&column)
+
+			fmt.Print("ascendingly? ")
+			fmt.Scanln(&asc)
+
+			var sortedText string
+
+			if asc {
+				sortedText = "ASC"
+			} else {
+				sortedText = "DESC"
+			}
+
+			itemsCopy = items.SortBy(column, asc)
+			backToItems = ViewAllItems(&itemsCopy, "SELECT * FROM items ORDER BY `"+column+"` "+sortedText)
+		case 1:
 			backToItems = true
 		case 2:
 			stopLoop = true
 		}
 	}, func() {
 		utils.ClearTerminal()
+		fmt.Println(titleText.Colored)
 		items.ShowInTable()
 	})
 
