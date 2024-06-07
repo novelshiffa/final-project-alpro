@@ -62,18 +62,6 @@ func (t *Transactions) FetchAll() {
 	}
 }
 
-func (t *Transactions) Edit(idx int, newTransaction Transaction) bool {
-	var index int = t.FindById(idx)
-
-	if index != -1 {
-		t.Items[index] = newTransaction
-
-		return true
-	}
-
-	return false
-}
-
 func (t *Transactions) Delete(idx int) (bool, error) {
 	if idx < 0 || idx >= t.Length {
 		return false, errors.New("invalid id")

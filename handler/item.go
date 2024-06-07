@@ -136,6 +136,7 @@ func EditItem(items *types.Items) bool {
 			}
 		}
 	}
+
 	var temp string
 
 	fmt.Print("Enter new name (Press Enter if you don't want to edit this attribute): ")
