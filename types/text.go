@@ -28,6 +28,12 @@ func (t *Text) SetColor(Color string) {
 		code += "34m"
 	case "white":
 		code += "37m"
+	case "cyan":
+		code += "36m"
+	case "magenta":
+		code += "35m"
+	case "black":
+		code += "30m"
 	default:
 		code = ""
 		reset = ""

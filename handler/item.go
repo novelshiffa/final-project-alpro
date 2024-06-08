@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/novelshiffa/final-project-alpro/types"
 	"github.com/novelshiffa/final-project-alpro/utils"
@@ -97,24 +98,62 @@ func ViewAllItems(items *types.Items, title string) bool {
 		case 0:
 			var itemsCopy types.Items
 			var column string
-			var asc bool
+			var asc string
 
-			fmt.Print("Which column? ")
-			fmt.Scanln(&column)
+			var rightArrowText types.Text = types.NewText("[→] ")
+			rightArrowText.SetColor("blue")
 
-			fmt.Print("ascendingly? ")
-			fmt.Scanln(&asc)
+			var zeroToCancelText types.Text = types.NewText("(0 to cancel) ")
+			zeroToCancelText.SetColor("red")
 
-			var sortedText string
+			var prompt types.Text = types.NewText("Sort by which column? ")
+			prompt.SetColor("white")
 
-			if asc {
-				sortedText = "ASC"
-			} else {
-				sortedText = "DESC"
+			var invalidInputErrText types.Text = types.NewText("Undefined column name. Try again.")
+			invalidInputErrText.SetColor("red")
+
+			var stopInput bool = false
+			for !stopInput {
+				fmt.Print(rightArrowText.Colored + prompt.Colored + zeroToCancelText.Colored)
+				fmt.Scanln(&column)
+
+				if items.IsColumn(column) || column == "0" {
+					stopInput = true
+				} else {
+					fmt.Println(invalidInputErrText.Colored)
+				}
 			}
 
-			itemsCopy = items.SortBy(column, asc)
-			backToItems = ViewAllItems(&itemsCopy, "SELECT * FROM items ORDER BY `"+column+"` "+sortedText)
+			if column == "0" {
+				backToItems = ViewAllItems(items, "Test Order")
+			} else {
+				prompt := types.NewText("Would you like to sort it ascendingly? [Y/N] ")
+				prompt.SetColor("white")
+				invalidInputErrText := types.NewText("Please input either Y or N.")
+				invalidInputErrText.SetColor("red")
+
+				for {
+					fmt.Print(rightArrowText.Colored + prompt.Colored + zeroToCancelText.Colored)
+					fmt.Scanln(&asc)
+
+					switch strings.ToLower(asc) {
+					case "y":
+						itemsCopy = items.SortBy(column, true)
+					case "n":
+						itemsCopy = items.SortBy(column, false)
+					case "0":
+						backToItems = ViewAllItems(items, "Test Order")
+						return
+					default:
+						fmt.Println(invalidInputErrText.Colored)
+						continue
+					}
+
+					backToItems = ViewAllItems(&itemsCopy, "Test Order")
+					break
+				}
+			}
+
 		case 1:
 			backToItems = true
 		case 2:

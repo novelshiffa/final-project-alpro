@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"strings"
 )
 
 type Item struct {
@@ -15,6 +16,11 @@ type Item struct {
 type Items struct {
 	Items  [NMAX]Item
 	Length int
+}
+
+func (items *Items) IsColumn(columnName string) bool {
+	lowerCasedColumnName := strings.ToLower(columnName)
+	return lowerCasedColumnName == "id" || lowerCasedColumnName == "name" || lowerCasedColumnName == "category" || lowerCasedColumnName == "price" || lowerCasedColumnName == "stock"
 }
 
 func (items *Items) getMaxCharOnName() int {
@@ -96,10 +102,11 @@ func (p *Items) SortBy(columnName string, ascending bool) Items {
 		Stock    int
 	*/
 
-	if !(columnName == "Id" || columnName == "Name" || columnName == "Category" || columnName == "Price" || columnName == "Stock") {
+	if !p.IsColumn(columnName) {
 		panic("Undefined column name.")
 	}
 
+	columnName = strings.ToLower(columnName)
 	var items Items
 
 	for i := 0; i < p.Length; i++ {
@@ -113,23 +120,23 @@ func (p *Items) SortBy(columnName string, ascending bool) Items {
 
 		for j := i + 1; j < p.Length; j++ {
 			switch columnName {
-			case "Id":
+			case "id":
 				if items.Items[j].Id < items.Items[key].Id && ascending || items.Items[j].Id > items.Items[key].Id && !ascending {
 					key = j
 				}
-			case "Name":
+			case "name":
 				if items.Items[j].Name < items.Items[key].Name && ascending || items.Items[j].Name > items.Items[key].Name && !ascending {
 					key = j
 				}
-			case "Category":
+			case "category":
 				if items.Items[j].Category < items.Items[key].Category && ascending || items.Items[j].Category > items.Items[key].Category && !ascending {
 					key = j
 				}
-			case "Price":
+			case "price":
 				if items.Items[j].Price < items.Items[key].Price && ascending || items.Items[j].Price > items.Items[key].Price && !ascending {
 					key = j
 				}
-			case "Stock":
+			case "stock":
 				if items.Items[j].Stock < items.Items[key].Stock && ascending || items.Items[j].Stock > items.Items[key].Stock && !ascending {
 					key = j
 				}
