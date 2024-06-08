@@ -37,7 +37,7 @@ func ItemHandler(items *types.Items) bool {
 			AddNewItem(items)
 			stopLoop = false
 		case 1:
-			stopLoop = !ViewAllItems(items, "SELECT * FROM items")
+			stopLoop = !ViewAllItems(items, "items")
 		case 2:
 			EditItem(items)
 			stopLoop = false
@@ -125,7 +125,7 @@ func ViewAllItems(items *types.Items, title string) bool {
 			}
 
 			if column == "0" {
-				backToItems = ViewAllItems(items, "Test Order")
+				backToItems = ViewAllItems(items, "items")
 			} else {
 				prompt := types.NewText("Would you like to sort it ascendingly? [Y/N] ")
 				prompt.SetColor("white")
@@ -142,14 +142,14 @@ func ViewAllItems(items *types.Items, title string) bool {
 					case "n":
 						itemsCopy = items.SortBy(column, false)
 					case "0":
-						backToItems = ViewAllItems(items, "Test Order")
+						backToItems = ViewAllItems(items, "items")
 						return
 					default:
 						fmt.Println(invalidInputErrText.Colored)
 						continue
 					}
 
-					backToItems = ViewAllItems(&itemsCopy, "Test Order")
+					backToItems = ViewAllItems(&itemsCopy, fmt.Sprintf("items?sortBy=%s&asc=%t", column, asc == "y"))
 					break
 				}
 			}
