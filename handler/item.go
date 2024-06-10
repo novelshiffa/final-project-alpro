@@ -29,7 +29,8 @@ func ItemHandler(items *types.Items) bool {
 
 	var cls bool = true
 
-	var txt types.Text = types.NewText("Items")
+	var txt types.Text = types.NewText("/items")
+	txt.SetColor("green")
 
 	menu.Listen(&selected, &stopLoop, &cls, func() {
 		switch selected {
@@ -37,7 +38,7 @@ func ItemHandler(items *types.Items) bool {
 			AddNewItem(items)
 			stopLoop = false
 		case 1:
-			stopLoop = !ViewAllItems(items, "items")
+			stopLoop = !ViewAllItems(items, "/items/view")
 		case 2:
 			EditItem(items)
 			stopLoop = false
@@ -46,6 +47,8 @@ func ItemHandler(items *types.Items) bool {
 			stopLoop = false
 		case 4:
 			backToHome = true
+		case 5:
+			stopLoop = true
 		}
 	}, func() {
 		fmt.Println(txt.Colored)
@@ -83,10 +86,11 @@ func ViewAllItems(items *types.Items, title string) bool {
 
 	menu.DefaultSelectedColor = "blue"
 	menu.Items[0] = types.NewText("[1] Sort by column")
-	menu.Items[1] = types.NewText("[2] Back to /items")
-	menu.Items[2] = types.NewText("[3] Exit program")
+	menu.Items[1] = types.NewText("[2] Filter by column")
+	menu.Items[2] = types.NewText("[3] Back to /items")
+	menu.Items[3] = types.NewText("[4] Exit program")
 
-	menu.Length = 3
+	menu.Length = 4
 	menu.SetSelected(0)
 
 	var backToItems bool = false
@@ -106,23 +110,10 @@ func ViewAllItems(items *types.Items, title string) bool {
 			var zeroToCancelText types.Text = types.NewText("(0 to cancel) ")
 			zeroToCancelText.SetColor("red")
 
-			var prompt types.Text = types.NewText("Sort by which column? ")
-			prompt.SetColor("white")
-
 			var invalidInputErrText types.Text = types.NewText("Undefined column name. Try again.")
 			invalidInputErrText.SetColor("red")
 
-			var stopInput bool = false
-			for !stopInput {
-				fmt.Print(rightArrowText.Colored + prompt.Colored + zeroToCancelText.Colored)
-				fmt.Scanln(&column)
-
-				if items.IsColumn(column) || column == "0" {
-					stopInput = true
-				} else {
-					fmt.Println(invalidInputErrText.Colored)
-				}
-			}
+			InputColumnName("items", "Sort by which column?", &column)
 
 			if column == "0" {
 				backToItems = ViewAllItems(items, "items")
@@ -136,27 +127,67 @@ func ViewAllItems(items *types.Items, title string) bool {
 					fmt.Print(rightArrowText.Colored + prompt.Colored + zeroToCancelText.Colored)
 					fmt.Scanln(&asc)
 
+					exitLoop := false // Variable to control the loop
+
 					switch strings.ToLower(asc) {
 					case "y":
 						itemsCopy = items.SortBy(column, true)
+						exitLoop = true
 					case "n":
 						itemsCopy = items.SortBy(column, false)
+						exitLoop = true
 					case "0":
-						backToItems = ViewAllItems(items, "items")
+						backToItems = ViewAllItems(items, title)
 						return
 					default:
 						fmt.Println(invalidInputErrText.Colored)
-						continue
 					}
 
-					backToItems = ViewAllItems(&itemsCopy, fmt.Sprintf("items?sortBy=%s&asc=%t", column, asc == "y"))
-					break
+					if exitLoop {
+						backToItems = ViewAllItems(&itemsCopy, title+fmt.Sprintf(" sortBy=%s&asc=%t", column, asc == "y"))
+						return // Exit the loop and the function
+					}
 				}
+
 			}
 
 		case 1:
-			backToItems = true
+			var itemsCopy types.Items
+			var column string
+
+			var rightArrowText types.Text = types.NewText("[→] ")
+			rightArrowText.SetColor("blue")
+
+			var zeroToCancelText types.Text = types.NewText("(0 to cancel) ")
+			zeroToCancelText.SetColor("red")
+
+			InputColumnName("items", "Filter by which column?", &column)
+
+			if column == "0" {
+				backToItems = ViewAllItems(items, title)
+			} else {
+				column = strings.ToLower(column)
+				var temp string
+				if column == "id" || column == "stock" || column == "price" {
+					var temp2 int
+					InputInteger("Enter value to filter: ", &temp2, true)
+					temp = fmt.Sprintf("%d", temp2)
+				} else {
+					var prompt = types.NewText("Enter value to filter: ")
+					fmt.Print(rightArrowText.Colored + prompt.Colored + zeroToCancelText.Colored)
+					InputlnString(&temp)
+				}
+
+				if column != "0" {
+					itemsCopy = items.FilterBy(column, temp)
+					backToItems = ViewAllItems(&itemsCopy, title+fmt.Sprintf(" %s='%s'", column, temp))
+				} else {
+					backToItems = ViewAllItems(items, title)
+				}
+			}
 		case 2:
+			backToItems = true
+		case 3:
 			stopLoop = true
 		}
 	}, func() {

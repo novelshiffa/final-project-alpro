@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -16,6 +17,11 @@ type Transaction struct {
 type Transactions struct {
 	Items  [NMAX]Transaction
 	Length int
+}
+
+func (Transactions *Transactions) IsColumn(columnName string) bool {
+	lowerCasedColumnName := strings.ToLower(columnName)
+	return lowerCasedColumnName == "id" || lowerCasedColumnName == "time" || lowerCasedColumnName == "type" || lowerCasedColumnName == "itemid" || lowerCasedColumnName == "quantity"
 }
 
 func (transactions *Transactions) ShowInTable() {

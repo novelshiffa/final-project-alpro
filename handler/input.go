@@ -1,8 +1,11 @@
 package handler
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/novelshiffa/final-project-alpro/types"
@@ -125,4 +128,50 @@ func InputInteger(prompt string, attr *int, required bool) {
 
 		temp = ""
 	}
+}
+
+func InputColumnName(_struct_ string, prmpt string, columnPtr *string) {
+	var prompt types.Text = types.NewText(prmpt + " ")
+	prompt.SetColor("white")
+
+	var rightArrowText types.Text = types.NewText("[→] ")
+	rightArrowText.SetColor("blue")
+
+	var zeroToCancelText types.Text = types.NewText("(0 to cancel) ")
+	zeroToCancelText.SetColor("red")
+
+	var invalidInputErrText types.Text = types.NewText("Undefined column name. Try again.")
+	invalidInputErrText.SetColor("red")
+
+	var stopInput bool = false
+	var temp string
+
+	for !stopInput {
+		fmt.Print(rightArrowText.Colored + prompt.Colored + zeroToCancelText.Colored)
+		fmt.Scanln(&temp)
+
+		var validInput bool
+
+		if _struct_ == "items" {
+			var items types.Items
+			validInput = items.IsColumn(temp) || temp == "0"
+		} else if _struct_ == "transaction" {
+			var transactions types.Transactions
+			validInput = transactions.IsColumn(temp) || temp == "0"
+		}
+
+		if validInput {
+			stopInput = true
+		} else {
+			fmt.Println(invalidInputErrText.Colored)
+		}
+	}
+
+	*columnPtr = temp
+}
+
+func InputlnString(ptr *string) {
+	reader := bufio.NewReader(os.Stdin)
+	input, _ := reader.ReadString('\n')
+	*ptr = strings.TrimSpace(input)
 }

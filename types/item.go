@@ -92,6 +92,35 @@ func (p *Items) Delete(idx int) {
 	p.Length--
 }
 
+func (p *Items) FilterBy(columnName string, value string) Items {
+	columnName = strings.ToLower(columnName)
+
+	var items Items
+	columnFilters := map[string](func(item Item) bool){
+		"id":       func(item Item) bool { return fmt.Sprintf("%d", item.Id) == value },
+		"name":     func(item Item) bool { return item.Name == value },
+		"category": func(item Item) bool { return item.Category == value },
+		"price":    func(item Item) bool { return fmt.Sprintf("%d", item.Price) == value },
+		"stock":    func(item Item) bool { return fmt.Sprintf("%d", item.Stock) == value },
+	}
+
+	filterFunc, exists := columnFilters[columnName]
+
+	if !exists || !p.IsColumn(columnName) {
+		panic("Undefined column.")
+	}
+
+	for i := 0; i < p.Length; i++ {
+		if filterFunc(p.Items[i]) {
+			items.Items[items.Length] = p.Items[i]
+
+			items.Length++
+		}
+	}
+
+	return items
+}
+
 func (p *Items) SortBy(columnName string, ascending bool) Items {
 	// Selection Sort
 	/*
