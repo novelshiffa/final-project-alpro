@@ -78,3 +78,62 @@ func (t *Transactions) Delete(idx int) {
 
 	t.Length--
 }
+
+func (t *Transactions) SortBy(columnName string, ascending bool) Transactions {
+	// Insertion Sort
+	// type Transaction struct {
+	// 	Id       int
+	// 	Time     time.Time
+	// 	Type     string
+	// 	Item     Item
+	// 	Quantity int
+	// }
+
+	if !t.IsColumn(columnName) {
+		panic("Undefined column name.")
+	}
+
+	columnName = strings.ToLower(columnName)
+	var transactions Transactions
+
+	for i := 0; i < t.Length; i++ {
+		transactions.Items[i] = t.Items[i]
+	}
+
+	transactions.Length = t.Length
+
+	for i := 1; i < t.Length; i++ {
+		j := i
+
+		for j > 0 {
+			switch columnName {
+			case "id":
+				if transactions.Items[j].Id < transactions.Items[j-1].Id && ascending || transactions.Items[j].Id > transactions.Items[j-1].Id && !ascending {
+					transactions.Items[j-1], transactions.Items[j] = transactions.Items[j], transactions.Items[j-1]
+				}
+			case "time":
+				if (transactions.Items[j].Time.Before(transactions.Items[j-1].Time) && ascending) ||
+					(transactions.Items[j].Time.After(transactions.Items[j-1].Time) && !ascending) {
+					transactions.Items[j-1], transactions.Items[j] = transactions.Items[j], transactions.Items[j-1]
+				}
+			case "itemid":
+				if transactions.Items[j].Item.Id < transactions.Items[j-1].Item.Id && ascending || transactions.Items[j].Item.Id > transactions.Items[j-1].Item.Id && !ascending {
+					transactions.Items[j-1], transactions.Items[j] = transactions.Items[j], transactions.Items[j-1]
+				}
+			case "type":
+				if transactions.Items[j].Type < transactions.Items[j-1].Type && ascending || transactions.Items[j].Type > transactions.Items[j-1].Type && !ascending {
+					transactions.Items[j-1], transactions.Items[j] = transactions.Items[j], transactions.Items[j-1]
+				}
+			case "quantity":
+				if transactions.Items[j].Quantity < transactions.Items[j-1].Quantity && ascending || transactions.Items[j].Quantity > transactions.Items[j-1].Quantity && !ascending {
+					transactions.Items[j-1], transactions.Items[j] = transactions.Items[j], transactions.Items[j-1]
+				}
+			}
+
+			j--
+
+		}
+	}
+
+	return transactions
+}

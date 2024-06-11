@@ -152,10 +152,10 @@ func InputColumnName(_struct_ string, prmpt string, columnPtr *string) {
 
 		var validInput bool
 
-		if _struct_ == "items" {
+		if _struct_ == "items" || _struct_ == "item" {
 			var items types.Items
 			validInput = items.IsColumn(temp) || temp == "0"
-		} else if _struct_ == "transaction" {
+		} else if _struct_ == "transactions" || _struct_ == "transaction" {
 			var transactions types.Transactions
 			validInput = transactions.IsColumn(temp) || temp == "0"
 		}

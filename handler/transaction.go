@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/novelshiffa/final-project-alpro/types"
 	"github.com/novelshiffa/final-project-alpro/utils"
@@ -28,7 +29,7 @@ func TransactionHandler(t *types.Transactions, i *types.Items) bool {
 
 	var cls bool = true
 
-	var txt types.Text = types.NewText("Transactions")
+	var txt types.Text = types.NewText("/transactions")
 
 	menu.Listen(&selected, &stopLoop, &cls, func() {
 		switch selected {
@@ -36,7 +37,7 @@ func TransactionHandler(t *types.Transactions, i *types.Items) bool {
 			fmt.Println("OK")
 			stopLoop = false
 		case 1:
-			stopLoop = !ViewAllTransactions(t)
+			stopLoop = !ViewAllTransactions(t, "/transactions/view")
 		case 2:
 			EditTransaction(t, i)
 			stopLoop = false
@@ -68,18 +69,23 @@ func CreateNewTransaction(t *types.Transactions, i *types.Items) {
 	t.CreateNew(transaction)
 }
 
-func ViewAllTransactions(t *types.Transactions) bool {
+func ViewAllTransactions(t *types.Transactions, title string) bool {
+	var titleText = types.NewText(title)
+	titleText.SetColor("green")
+
 	var stopLoop bool
 	var menu types.Menu
 
 	menu.DefaultSelectedColor = "blue"
-	menu.Items[0] = types.NewText("[1] Back to /items")
-	menu.Items[1] = types.NewText("[2] Exit program")
+	menu.Items[0] = types.NewText("[1] Sort by column")
+	menu.Items[1] = types.NewText("[2] Filter by column")
+	menu.Items[2] = types.NewText("[3] Back to /transactions")
+	menu.Items[3] = types.NewText("[3] Exit program")
 
-	menu.Length = 2
+	menu.Length = 4
 	menu.SetSelected(0)
 
-	var backToItems bool = false
+	var backToTransactions bool = false
 
 	var selected int
 
@@ -88,16 +94,65 @@ func ViewAllTransactions(t *types.Transactions) bool {
 	menu.Listen(&selected, &stopLoop, &cls, func() {
 		switch selected {
 		case 0:
-			backToItems = true
+			var transactionsCopy types.Transactions
+			var column string
+			var asc string
+
+			var rightArrowText types.Text = types.NewText("[→] ")
+			rightArrowText.SetColor("blue")
+
+			var zeroToCancelText types.Text = types.NewText("(0 to cancel) ")
+			zeroToCancelText.SetColor("red")
+
+			InputColumnName("transactions", "Sort by which column?", &column)
+
+			if column == "0" {
+				backToTransactions = ViewAllTransactions(t, "/transactions/view")
+			} else {
+				prompt := types.NewText("Would you like to sort it ascendingly? [Y/N] ")
+				prompt.SetColor("white")
+				invalidInputErrText := types.NewText("Please input either Y or N.")
+				invalidInputErrText.SetColor("red")
+
+				for {
+					fmt.Print(rightArrowText.Colored + prompt.Colored + zeroToCancelText.Colored)
+					fmt.Scanln(&asc)
+
+					exitLoop := false // Variable to control the loop
+
+					switch strings.ToLower(asc) {
+					case "y":
+						transactionsCopy = t.SortBy(column, true)
+						exitLoop = true
+					case "n":
+						transactionsCopy = t.SortBy(column, false)
+						exitLoop = true
+					case "0":
+						backToTransactions = ViewAllTransactions(t, title)
+						return
+					default:
+						fmt.Println(invalidInputErrText.Colored)
+					}
+
+					if exitLoop {
+						backToTransactions = ViewAllTransactions(&transactionsCopy, title+fmt.Sprintf(" sortBy=%s&asc=%t", column, asc == "y"))
+						return // Exit the loop and the function
+					}
+				}
+
+			}
 		case 2:
+			backToTransactions = true
+		case 3:
 			stopLoop = true
 		}
 	}, func() {
 		utils.ClearTerminal()
+		fmt.Println(titleText.Colored)
 		t.ShowInTable()
 	})
 
-	return backToItems
+	return backToTransactions
 }
 
 func EditTransaction(t *types.Transactions, i *types.Items) {

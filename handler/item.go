@@ -110,13 +110,10 @@ func ViewAllItems(items *types.Items, title string) bool {
 			var zeroToCancelText types.Text = types.NewText("(0 to cancel) ")
 			zeroToCancelText.SetColor("red")
 
-			var invalidInputErrText types.Text = types.NewText("Undefined column name. Try again.")
-			invalidInputErrText.SetColor("red")
-
 			InputColumnName("items", "Sort by which column?", &column)
 
 			if column == "0" {
-				backToItems = ViewAllItems(items, "items")
+				backToItems = ViewAllItems(items, "/items/view")
 			} else {
 				prompt := types.NewText("Would you like to sort it ascendingly? [Y/N] ")
 				prompt.SetColor("white")
