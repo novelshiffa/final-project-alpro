@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/novelshiffa/final-project-alpro/types"
 	"github.com/novelshiffa/final-project-alpro/utils"
@@ -30,11 +31,12 @@ func TransactionHandler(t *types.Transactions, i *types.Items) bool {
 	var cls bool = true
 
 	var txt types.Text = types.NewText("/transactions")
+	txt.SetColor("green")
 
 	menu.Listen(&selected, &stopLoop, &cls, func() {
 		switch selected {
 		case 0:
-			fmt.Println("OK")
+			CreateNewTransaction(t, i)
 			stopLoop = false
 		case 1:
 			stopLoop = !ViewAllTransactions(t, "/transactions/view")
@@ -61,7 +63,7 @@ func CreateNewTransaction(t *types.Transactions, i *types.Items) {
 
 	var transaction types.Transaction
 
-	InputTime("Transaction time: ", &transaction.Time, true)
+	InputTime("Transaction time: ", &transaction.Time, true, false)
 	InputTransactionType("Type of transaction: ", &transaction.Type, true)
 	InputItem("Enter item id: ", &transaction.Item, true, i)
 	InputInteger("Enter quantity: ", &transaction.Quantity, true)
@@ -141,6 +143,64 @@ func ViewAllTransactions(t *types.Transactions, title string) bool {
 				}
 
 			}
+		case 1:
+			var transactionsCopy types.Transactions
+			var column string
+
+			var rightArrowText types.Text = types.NewText("[→] ")
+			rightArrowText.SetColor("blue")
+
+			var zeroToCancelText types.Text = types.NewText("(0 to cancel) ")
+			zeroToCancelText.SetColor("red")
+
+			InputColumnName("transactions", "Filter by which column?", &column)
+
+			if column == "0" {
+				backToTransactions = ViewAllTransactions(t, title)
+			} else {
+				column = strings.ToLower(column)
+				var temp string
+				if column == "id" || column == "itemid" || column == "quantity" {
+					var temp2 int
+					InputInteger("Enter value to filter: ", &temp2, true)
+					temp = fmt.Sprintf("%d", temp2)
+				} else if column == "time" {
+					var timeTemp time.Time
+					var dateOnly string
+
+					prompt := types.NewText("Would you like to filter it by date (not date and time)? [Y/N] ")
+					prompt.SetColor("white")
+					invalidInputErrText := types.NewText("Please input either Y or N.")
+					invalidInputErrText.SetColor("red")
+
+					for !(dateOnly == "y" || dateOnly == "n") {
+						fmt.Print(rightArrowText.Colored + prompt.Colored + zeroToCancelText.Colored)
+						fmt.Scanln(&dateOnly)
+
+						dateOnly = strings.ToLower(dateOnly)
+					}
+
+					InputTime("Enter time to filter: ", &timeTemp, true, dateOnly == "y")
+
+					if dateOnly == "y" {
+						temp = timeTemp.Format("2006-01-02")
+					} else {
+						temp = timeTemp.Format("2006-01-02 15:04:05")
+					}
+
+				} else {
+					var prompt = types.NewText("Enter value to filter: ")
+					fmt.Print(rightArrowText.Colored + prompt.Colored + zeroToCancelText.Colored)
+					InputlnString(&temp)
+				}
+
+				if column != "0" {
+					transactionsCopy = t.FilterBy(column, temp)
+					backToTransactions = ViewAllTransactions(&transactionsCopy, title+fmt.Sprintf(" %s='%s'", column, temp))
+				} else {
+					backToTransactions = ViewAllTransactions(t, title)
+				}
+			}
 		case 2:
 			backToTransactions = true
 		case 3:
@@ -191,6 +251,7 @@ func EditTransaction(t *types.Transactions, i *types.Items) {
 		OldValueFormat(t.Items[index].Time.String())+
 			"Transaction time (Press Enter if you don't want to edit this attribute): ",
 		&t.Items[index].Time,
+		false,
 		false,
 	)
 

@@ -79,6 +79,36 @@ func (t *Transactions) Delete(idx int) {
 	t.Length--
 }
 
+func (t *Transactions) FilterBy(columnName string, value string) Transactions {
+	columnName = strings.ToLower(columnName)
+
+	var transactions Transactions
+	columnFilters := map[string](func(transaction Transaction) bool){
+		"id": func(transaction Transaction) bool { return fmt.Sprintf("%d", transaction.Id) == value },
+		"time": func(transaction Transaction) bool {
+			return transaction.Time.Format("2006-01-02 15:04:05") == value || strings.Split(transaction.Time.Format("2006-01-02 15:04:05"), " ")[0] == value
+		},
+		"type":     func(transaction Transaction) bool { return transaction.Type == value },
+		"itemid":   func(transaction Transaction) bool { return fmt.Sprintf("%d", transaction.Item.Id) == value },
+		"quantity": func(transaction Transaction) bool { return fmt.Sprintf("%d", transaction.Quantity) == value },
+	}
+
+	filterFunc, exists := columnFilters[columnName]
+
+	if !exists || !t.IsColumn(columnName) {
+		panic("Undefined column.")
+	}
+
+	for i := 0; i < t.Length; i++ {
+		if filterFunc(t.Items[i]) {
+			transactions.Items[transactions.Length] = t.Items[i]
+			transactions.Length++
+		}
+	}
+
+	return transactions
+}
+
 func (t *Transactions) SortBy(columnName string, ascending bool) Transactions {
 	// Insertion Sort
 	// type Transaction struct {

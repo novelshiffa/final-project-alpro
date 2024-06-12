@@ -66,14 +66,23 @@ func InputTransactionType(prompt string, attr *string, required bool) {
 	}
 }
 
-func InputTime(prompt string, attr *time.Time, required bool) {
+func InputTime(prompt string, attr *time.Time, required bool, dateOnly bool) {
 	var yyyymmdd, hhmmss, datetimeStr string
 	var promptText types.Text = types.NewText(prompt)
 
 	// Layout for parsing the datetime string
-	var layout string = "2006-01-02 15:04:05"
+	var layout string
+	var format string
 
-	var errorText = types.NewText("Invalid type of input, expects yyyy-mm-dd hh:mm:ss string format. Try again.")
+	if !dateOnly {
+		layout = "2006-01-02 15:04:05"
+		format = "yyyy-mm-dd hh:mm:ss"
+	} else {
+		layout = "2006-01-02"
+		format = "yyyy-mm-dd"
+	}
+
+	var errorText = types.NewText("Invalid type of input, expects " + format + " string format. Try again.")
 	errorText.SetColor("red")
 
 	for {
@@ -84,7 +93,11 @@ func InputTime(prompt string, attr *time.Time, required bool) {
 			return
 		}
 
-		datetimeStr = yyyymmdd + " " + hhmmss
+		if !dateOnly {
+			datetimeStr = yyyymmdd + " " + hhmmss
+		} else {
+			datetimeStr = yyyymmdd
+		}
 
 		// Parse the combined string into a time.Time object
 		datetime, err := time.Parse(layout, datetimeStr)
