@@ -13,6 +13,11 @@ func NewText(Value string) Text {
 	return text
 }
 
+func (t *Text) SetValue(text string) {
+	t.Value = text
+	t.SetColor(t.Color)
+}
+
 func (t *Text) SetColor(Color string) {
 	code := "\033["
 	reset := code + "0m"
@@ -39,6 +44,7 @@ func (t *Text) SetColor(Color string) {
 		reset = ""
 	}
 
+	(*t).Color = Color
 	(*t).Colored = code + (*t).Value + reset
 
 	//fmt.Println((*t).Colored)

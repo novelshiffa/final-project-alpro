@@ -11,6 +11,19 @@ import (
 	"github.com/novelshiffa/final-project-alpro/types"
 )
 
+func OldValueFormat(oldValue string) string {
+	text := types.NewText("[!] Current value: " + oldValue + "\n")
+	text.SetColor("blue")
+
+	return text.Colored
+}
+
+func RightArrowedPrompt(prompt string) string {
+	var rightArrowText types.Text = types.NewText("[→] ")
+	rightArrowText.SetColor("blue")
+	return rightArrowText.Colored + types.NewText(prompt).Colored
+}
+
 func InputItem(prompt string, attr *types.Item, required bool, itemsRef *types.Items) {
 	var temp int
 
@@ -40,7 +53,7 @@ func InputItem(prompt string, attr *types.Item, required bool, itemsRef *types.I
 	}
 }
 
-func InputTransactionType(prompt string, attr *string, required bool) {
+func InputTransactionType(prompt string, attr *string, required bool, exception string) {
 	var temp string
 
 	var promptText types.Text = types.NewText(prompt)
@@ -51,7 +64,7 @@ func InputTransactionType(prompt string, attr *string, required bool) {
 		fmt.Print(promptText.Colored)
 		fmt.Scanln(&temp)
 
-		if temp == "" && !required {
+		if temp == "" && !required || temp == exception {
 			return
 		}
 

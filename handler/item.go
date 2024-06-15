@@ -49,6 +49,9 @@ func ItemHandler(items *types.Items) bool {
 			backToHome = true
 		case 5:
 			stopLoop = true
+			var goodByeText = types.NewText("さよなら！")
+			goodByeText.SetColor("green")
+			fmt.Println(goodByeText.Colored)
 		}
 	}, func() {
 		fmt.Println(txt.Colored)
@@ -64,15 +67,41 @@ func AddNewItem(items *types.Items) {
 
 	var p types.Item
 
-	fmt.Print("Item name: ")
+	var rightArrowText types.Text = types.NewText("[→] ")
+	rightArrowText.SetColor("blue")
+
+	minusOneToCancel := "(Type -1 to cancel)"
+	prompt := types.NewText(fmt.Sprintf("Enter item name %s: ", minusOneToCancel))
+	prompt.SetColor("white")
+
+	fmt.Print(rightArrowText.Colored + prompt.Colored)
 	fmt.Scanln(&p.Name)
 
-	InputInteger("Item price: ", &p.Price, true)
+	if p.Name == "-1" {
+		return
+	}
 
-	InputInteger("Item stock: ", &p.Stock, true)
+	prompt.SetValue("Enter item price " + minusOneToCancel + ": ")
+	InputInteger(rightArrowText.Colored+prompt.Colored, &p.Price, true)
 
-	fmt.Print("Item category: ")
+	if p.Price == -1 {
+		return
+	}
+
+	prompt.SetValue("Enter item stock " + minusOneToCancel + ": ")
+	InputInteger(rightArrowText.Colored+prompt.Colored, &p.Stock, true)
+
+	if p.Stock == -1 {
+		return
+	}
+
+	prompt.SetValue(fmt.Sprintf("Enter item category %s: ", minusOneToCancel))
+	fmt.Print(rightArrowText.Colored + prompt.Colored)
 	fmt.Scanln(&p.Category)
+
+	if p.Category == "-1" {
+		return
+	}
 
 	items.AddNew(p)
 }
@@ -104,24 +133,16 @@ func ViewAllItems(items *types.Items, title string) bool {
 			var column string
 			var asc string
 
-			var rightArrowText types.Text = types.NewText("[→] ")
-			rightArrowText.SetColor("blue")
-
-			var zeroToCancelText types.Text = types.NewText("(0 to cancel) ")
-			zeroToCancelText.SetColor("red")
-
 			InputColumnName("items", "Sort by which column?", &column)
 
 			if column == "0" {
 				backToItems = ViewAllItems(items, "/items/view")
 			} else {
-				prompt := types.NewText("Would you like to sort it ascendingly? [Y/N] ")
-				prompt.SetColor("white")
 				invalidInputErrText := types.NewText("Please input either Y or N.")
 				invalidInputErrText.SetColor("red")
 
 				for {
-					fmt.Print(rightArrowText.Colored + prompt.Colored + zeroToCancelText.Colored)
+					fmt.Print(RightArrowedPrompt("Would you like to sort it ascendingly? [Y/N] (0 to cancel)"))
 					fmt.Scanln(&asc)
 
 					exitLoop := false // Variable to control the loop
@@ -152,12 +173,6 @@ func ViewAllItems(items *types.Items, title string) bool {
 			var itemsCopy types.Items
 			var column string
 
-			var rightArrowText types.Text = types.NewText("[→] ")
-			rightArrowText.SetColor("blue")
-
-			var zeroToCancelText types.Text = types.NewText("(0 to cancel) ")
-			zeroToCancelText.SetColor("red")
-
 			InputColumnName("items", "Filter by which column?", &column)
 
 			if column == "0" {
@@ -167,11 +182,10 @@ func ViewAllItems(items *types.Items, title string) bool {
 				var temp string
 				if column == "id" || column == "stock" || column == "price" {
 					var temp2 int
-					InputInteger("Enter value to filter: ", &temp2, true)
+					InputInteger(RightArrowedPrompt("Enter value to filter: "), &temp2, true)
 					temp = fmt.Sprintf("%d", temp2)
 				} else {
-					var prompt = types.NewText("Enter value to filter: ")
-					fmt.Print(rightArrowText.Colored + prompt.Colored + zeroToCancelText.Colored)
+					fmt.Print("Enter value to filter (0 to cancel): ")
 					InputlnString(&temp)
 				}
 
@@ -186,6 +200,9 @@ func ViewAllItems(items *types.Items, title string) bool {
 			backToItems = true
 		case 3:
 			stopLoop = true
+			var goodByeText = types.NewText("さよなら！")
+			goodByeText.SetColor("green")
+			fmt.Println(goodByeText.Colored)
 		}
 	}, func() {
 		utils.ClearTerminal()
@@ -205,7 +222,7 @@ func EditItem(items *types.Items) {
 	errText.SetColor("red")
 
 	for !found {
-		InputInteger("Enter item id (0 to exit): ", &id, true)
+		InputInteger(RightArrowedPrompt("Enter item id (0 to cancel) "), &id, true)
 
 		if id == 0 {
 			return
@@ -222,7 +239,8 @@ func EditItem(items *types.Items) {
 
 	var temp string
 
-	fmt.Print("Enter new name (Press Enter if you don't want to edit this attribute): ")
+	fmt.Print(OldValueFormat(items.Items[index].Name))
+	fmt.Print(RightArrowedPrompt("Enter new name (Press Enter if you don't want to edit this attribute): "))
 	fmt.Scanln(&temp)
 
 	if temp != "" {
@@ -230,7 +248,8 @@ func EditItem(items *types.Items) {
 		temp = ""
 	}
 
-	fmt.Print("Enter new category (Press Enter if you don't want to edit this attribute): ")
+	fmt.Print(OldValueFormat(items.Items[index].Category))
+	fmt.Print(RightArrowedPrompt("Enter new category (Press Enter if you don't want to edit this attribute): "))
 	fmt.Scanln(&temp)
 
 	if temp != "" {
@@ -238,8 +257,11 @@ func EditItem(items *types.Items) {
 		temp = ""
 	}
 
-	InputInteger("Enter new price (Press Enter if you don't want to edit this attribute): ", &items.Items[index].Price, false)
-	InputInteger("Enter new stock (Press Enter if you don't want to edit this attribute): ", &items.Items[index].Stock, false)
+	fmt.Print(OldValueFormat(fmt.Sprintf("%d", items.Items[index].Price)))
+	InputInteger(RightArrowedPrompt("Enter new price (Press Enter if you don't want to edit this attribute): "), &items.Items[index].Price, false)
+
+	fmt.Print(OldValueFormat(fmt.Sprintf("%d", items.Items[index].Stock)))
+	InputInteger(RightArrowedPrompt("Enter new stock (Press Enter if you don't want to edit this attribute): "), &items.Items[index].Stock, false)
 }
 
 func DeleteItem(items *types.Items) {
@@ -251,7 +273,7 @@ func DeleteItem(items *types.Items) {
 	errText.SetColor("red")
 
 	for !found {
-		InputInteger("Enter item id (0 to exit): ", &id, true)
+		InputInteger(RightArrowedPrompt("Enter id id (0 to cancel): "), &id, true)
 
 		if id == 0 {
 			return

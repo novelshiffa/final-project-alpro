@@ -24,6 +24,7 @@ func (items *Items) IsColumn(columnName string) bool {
 }
 
 func (items *Items) getMaxCharOnName() int {
+	// Find Max Algorithm
 	max := 20
 	for i := 0; i < items.Length; i++ {
 		if len(items.Items[i].Name) > max {

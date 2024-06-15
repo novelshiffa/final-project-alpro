@@ -16,7 +16,7 @@ var transactions types.Transactions
 // Global Variable Declarations -- End
 
 func main() {
-	items := types.Items{
+	items = types.Items{
 		Items: [types.NMAX]types.Item{
 			{Id: 1, Name: "Beras Rojo Lele", Category: "Makanan Pokok", Price: 12000, Stock: 100},
 			{Id: 2, Name: "Minyak Goreng Bimoli", Category: "Minyak", Price: 14000, Stock: 80},
@@ -32,7 +32,7 @@ func main() {
 		Length: 10,
 	}
 
-	transactions := types.Transactions{
+	transactions = types.Transactions{
 		Items: [types.NMAX]types.Transaction{
 			{Id: 1, Time: time.Date(2024, 6, 1, 14, 0, 0, 0, time.UTC), Type: "incoming", Item: items.Items[0], Quantity: 10},
 			{Id: 2, Time: time.Date(2024, 6, 2, 15, 0, 0, 0, time.UTC), Type: "outgoing", Item: items.Items[1], Quantity: 5},
@@ -70,7 +70,9 @@ func main() {
 			stopLoop = !handler.TransactionHandler(&transactions, &items)
 		case 2:
 			stopLoop = true
-			fmt.Println("Thank you. Good bye!")
+			var goodByeText = types.NewText("さよなら！")
+			goodByeText.SetColor("green")
+			fmt.Println(goodByeText.Colored)
 		}
 	}, func() {})
 

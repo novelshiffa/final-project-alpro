@@ -19,9 +19,19 @@ type Transactions struct {
 	Length int
 }
 
-func (Transactions *Transactions) IsColumn(columnName string) bool {
+func (t *Transactions) IsColumn(columnName string) bool {
 	lowerCasedColumnName := strings.ToLower(columnName)
 	return lowerCasedColumnName == "id" || lowerCasedColumnName == "time" || lowerCasedColumnName == "type" || lowerCasedColumnName == "itemid" || lowerCasedColumnName == "quantity"
+}
+
+func (transactions *Transactions) isIdSorted(ascendingly bool) bool {
+	for i := 1; i < transactions.Length; i++ {
+		if transactions.Items[i].Id < transactions.Items[i-1].Id && ascendingly || transactions.Items[i].Id > transactions.Items[i-1].Id && !ascendingly {
+			return false
+		}
+	}
+
+	return true
 }
 
 func (transactions *Transactions) ShowInTable() {
@@ -34,8 +44,11 @@ func (transactions *Transactions) ShowInTable() {
 }
 
 func (t *Transactions) FindById(id int) int {
-	// Binary search algorithm
-	// TODO: Check if sorted
+	// Binary search algorithm, automatically sort ascendingly by id if not sorted
+
+	if !t.isIdSorted(true) {
+		t.SortBy("id", true)
+	}
 
 	low, high := 0, t.Length-1
 	for low <= high {

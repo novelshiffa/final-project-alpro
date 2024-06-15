@@ -48,6 +48,11 @@ func TransactionHandler(t *types.Transactions, i *types.Items) bool {
 			stopLoop = false
 		case 4:
 			backToHome = true
+		case 5:
+			stopLoop = true
+			var goodByeText = types.NewText("さよなら！")
+			goodByeText.SetColor("green")
+			fmt.Println(goodByeText.Colored)
 		}
 	}, func() {
 		fmt.Println(txt.Colored)
@@ -63,10 +68,34 @@ func CreateNewTransaction(t *types.Transactions, i *types.Items) {
 
 	var transaction types.Transaction
 
-	InputTime("Transaction time: ", &transaction.Time, true, false)
-	InputTransactionType("Type of transaction: ", &transaction.Type, true)
-	InputItem("Enter item id: ", &transaction.Item, true, i)
-	InputInteger("Enter quantity: ", &transaction.Quantity, true)
+	var rightArrowText types.Text = types.NewText("[→] ")
+	rightArrowText.SetColor("blue")
+
+	prompt := types.NewText("Enter transaction time ( Type 1011-01-01 01:01:01 to cancel ): ")
+	prompt.SetColor("white")
+
+	InputTime(rightArrowText.Colored+prompt.Colored, &transaction.Time, true, false)
+
+	if transaction.Time.Format("2024-01-01 01:01:01") == "1011-01-01 01:01:01" {
+		return
+	}
+
+	prompt.SetValue("Enter type of transaction (Type 0 to cancel): ")
+	InputTransactionType(rightArrowText.Colored+prompt.Colored, &transaction.Type, true, "0")
+
+	if transaction.Type == "0" || transaction.Type == "" {
+		return
+	}
+
+	prompt.SetValue("Enter item id (Type 0 to cancel): ")
+	InputItem(rightArrowText.Colored+prompt.Colored, &transaction.Item, false, i)
+
+	if transaction.Item.Id == 0 {
+		return
+	}
+
+	prompt.SetValue("Enter quantity (Type -1 to cancel): ")
+	InputInteger(rightArrowText.Colored+prompt.Colored, &transaction.Quantity, false)
 
 	t.CreateNew(transaction)
 }
@@ -82,7 +111,7 @@ func ViewAllTransactions(t *types.Transactions, title string) bool {
 	menu.Items[0] = types.NewText("[1] Sort by column")
 	menu.Items[1] = types.NewText("[2] Filter by column")
 	menu.Items[2] = types.NewText("[3] Back to /transactions")
-	menu.Items[3] = types.NewText("[3] Exit program")
+	menu.Items[3] = types.NewText("[4] Exit program")
 
 	menu.Length = 4
 	menu.SetSelected(0)
@@ -100,24 +129,16 @@ func ViewAllTransactions(t *types.Transactions, title string) bool {
 			var column string
 			var asc string
 
-			var rightArrowText types.Text = types.NewText("[→] ")
-			rightArrowText.SetColor("blue")
-
-			var zeroToCancelText types.Text = types.NewText("(0 to cancel) ")
-			zeroToCancelText.SetColor("red")
-
 			InputColumnName("transactions", "Sort by which column?", &column)
 
 			if column == "0" {
 				backToTransactions = ViewAllTransactions(t, "/transactions/view")
 			} else {
-				prompt := types.NewText("Would you like to sort it ascendingly? [Y/N] ")
-				prompt.SetColor("white")
 				invalidInputErrText := types.NewText("Please input either Y or N.")
 				invalidInputErrText.SetColor("red")
 
 				for {
-					fmt.Print(rightArrowText.Colored + prompt.Colored + zeroToCancelText.Colored)
+					fmt.Print(RightArrowedPrompt("Would you like to sort it ascendingly? [Y/N] (0 to cancel)"))
 					fmt.Scanln(&asc)
 
 					exitLoop := false // Variable to control the loop
@@ -147,12 +168,6 @@ func ViewAllTransactions(t *types.Transactions, title string) bool {
 			var transactionsCopy types.Transactions
 			var column string
 
-			var rightArrowText types.Text = types.NewText("[→] ")
-			rightArrowText.SetColor("blue")
-
-			var zeroToCancelText types.Text = types.NewText("(0 to cancel) ")
-			zeroToCancelText.SetColor("red")
-
 			InputColumnName("transactions", "Filter by which column?", &column)
 
 			if column == "0" {
@@ -162,19 +177,17 @@ func ViewAllTransactions(t *types.Transactions, title string) bool {
 				var temp string
 				if column == "id" || column == "itemid" || column == "quantity" {
 					var temp2 int
-					InputInteger("Enter value to filter: ", &temp2, true)
+					InputInteger(RightArrowedPrompt("Enter value to filter: "), &temp2, true)
 					temp = fmt.Sprintf("%d", temp2)
 				} else if column == "time" {
 					var timeTemp time.Time
 					var dateOnly string
 
-					prompt := types.NewText("Would you like to filter it by date (not date and time)? [Y/N] ")
-					prompt.SetColor("white")
 					invalidInputErrText := types.NewText("Please input either Y or N.")
 					invalidInputErrText.SetColor("red")
 
 					for !(dateOnly == "y" || dateOnly == "n") {
-						fmt.Print(rightArrowText.Colored + prompt.Colored + zeroToCancelText.Colored)
+						fmt.Print(RightArrowedPrompt("Would you like to filter it by date (not date and time)? [Y/N] (0 to cancel)"))
 						fmt.Scanln(&dateOnly)
 
 						dateOnly = strings.ToLower(dateOnly)
@@ -189,8 +202,7 @@ func ViewAllTransactions(t *types.Transactions, title string) bool {
 					}
 
 				} else {
-					var prompt = types.NewText("Enter value to filter: ")
-					fmt.Print(rightArrowText.Colored + prompt.Colored + zeroToCancelText.Colored)
+					fmt.Print(RightArrowedPrompt("Enter value to filter (0 to cancel): "))
 					InputlnString(&temp)
 				}
 
@@ -205,6 +217,10 @@ func ViewAllTransactions(t *types.Transactions, title string) bool {
 			backToTransactions = true
 		case 3:
 			stopLoop = true
+
+			var goodByeText = types.NewText("さよなら！")
+			goodByeText.SetColor("green")
+			fmt.Println(goodByeText.Colored)
 		}
 	}, func() {
 		utils.ClearTerminal()
@@ -224,7 +240,7 @@ func EditTransaction(t *types.Transactions, i *types.Items) {
 	errText.SetColor("red")
 
 	for !found {
-		InputInteger("Enter item id (0 to exit): ", &id, true)
+		InputInteger(RightArrowedPrompt("Enter item id (0 to cancel): "), &id, true)
 
 		if id == 0 {
 			return
@@ -240,16 +256,9 @@ func EditTransaction(t *types.Transactions, i *types.Items) {
 	}
 
 	// Input transaction time
-	var OldValueFormat = func(oldValue string) string {
-		text := types.NewText("[!] Current value: " + oldValue + "\n")
-		text.SetColor("blue")
-
-		return text.Colored
-	}
-
 	InputTime(
 		OldValueFormat(t.Items[index].Time.String())+
-			"Transaction time (Press Enter if you don't want to edit this attribute): ",
+			RightArrowedPrompt("Transaction time (Press Enter if you don't want to edit this attribute): "),
 		&t.Items[index].Time,
 		false,
 		false,
@@ -258,15 +267,15 @@ func EditTransaction(t *types.Transactions, i *types.Items) {
 	// Input transaction type
 	InputTransactionType(
 		OldValueFormat(t.Items[index].Type)+
-			"Type of transaction (Press Enter if you don't want to edit this attribute): ",
+			RightArrowedPrompt("Type of transaction (Press Enter if you don't want to edit this attribute): "),
 		&t.Items[index].Type,
-		false,
+		false, "",
 	)
 
 	// Input item id
 	InputItem(
 		OldValueFormat(fmt.Sprint(t.Items[index].Item.Id))+
-			"Enter item id (Press Enter if you don't want to edit this attribute): ",
+			RightArrowedPrompt("Enter item id (Press Enter if you don't want to edit this attribute): "),
 		&t.Items[index].Item,
 		false,
 		i,
@@ -275,7 +284,7 @@ func EditTransaction(t *types.Transactions, i *types.Items) {
 	// Input quantity
 	InputInteger(
 		OldValueFormat(fmt.Sprint(t.Items[index].Quantity))+
-			"Enter quantity (Press Enter if you don't want to edit this attribute): ",
+			RightArrowedPrompt("Enter quantity (Press Enter if you don't want to edit this attribute): "),
 		&t.Items[index].Quantity,
 		false,
 	)
@@ -290,7 +299,7 @@ func DeleteTransaction(t *types.Transactions) {
 	errText.SetColor("red")
 
 	for !found {
-		InputInteger("Enter item id (0 to exit): ", &id, true)
+		InputInteger(RightArrowedPrompt("Enter item id (0 to cancel): "), &id, true)
 
 		if id == 0 {
 			return
