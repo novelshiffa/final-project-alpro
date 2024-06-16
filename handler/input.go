@@ -76,7 +76,7 @@ func InputItem(prompt string, attr *types.Item, required bool, itemsRef *types.I
 
 	// Membuat teks prompt dan teks error untuk output
 	var promptText = types.NewText(prompt)
-	var errorText = types.NewText("Item not found. Try again")
+	var errorText = types.NewText("Item not found. Try again.")
 	errorText.SetColor("red")
 
 	var index int
@@ -271,7 +271,7 @@ func InputColumnName(_struct_ string, prmpt string, columnPtr *string) {
 
 	for !stopInput {
 		// Menampilkan prompt dan instruksi
-		fmt.Print(RightArrowedPrompt(prmpt + " (0 to cancel)"))
+		fmt.Print(RightArrowedPrompt(prmpt + " (0 to cancel) "))
 		fmt.Scanln(&temp)
 
 		var validInput bool

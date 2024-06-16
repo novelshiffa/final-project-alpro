@@ -138,7 +138,7 @@ func ViewAllTransactions(t *types.Transactions, title string) bool {
 				invalidInputErrText.SetColor("red")
 
 				for {
-					fmt.Print(RightArrowedPrompt("Would you like to sort it ascendingly? [Y/N] (0 to cancel)"))
+					fmt.Print(RightArrowedPrompt("Would you like to sort it ascendingly? [Y/N] (0 to cancel) "))
 					fmt.Scanln(&asc)
 
 					exitLoop := false // Variable to control the loop
