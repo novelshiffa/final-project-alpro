@@ -187,7 +187,7 @@ func ViewAllTransactions(t *types.Transactions, title string) bool {
 					invalidInputErrText.SetColor("red")
 
 					for !(dateOnly == "y" || dateOnly == "n") {
-						fmt.Print(RightArrowedPrompt("Would you like to filter it by date (not date and time)? [Y/N] (0 to cancel)"))
+						fmt.Print(RightArrowedPrompt("Would you like to filter it by date (not date and time)? [Y/N] (0 to cancel) "))
 						fmt.Scanln(&dateOnly)
 
 						dateOnly = strings.ToLower(dateOnly)

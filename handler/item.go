@@ -241,7 +241,7 @@ func EditItem(items *types.Items) {
 
 	fmt.Print(OldValueFormat(items.Items[index].Name))
 	fmt.Print(RightArrowedPrompt("Enter new name (Press Enter if you don't want to edit this attribute): "))
-	fmt.Scanln(&temp)
+	InputlnString(&temp)
 
 	if temp != "" {
 		items.Items[index].Name = temp
