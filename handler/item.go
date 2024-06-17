@@ -185,11 +185,11 @@ func ViewAllItems(items *types.Items, title string) bool {
 					InputInteger(RightArrowedPrompt("Enter value to filter: "), &temp2, true)
 					temp = fmt.Sprintf("%d", temp2)
 				} else {
-					fmt.Print("Enter value to filter (0 to cancel): ")
+					fmt.Print(RightArrowedPrompt("Enter value to filter (-1 to cancel): "))
 					InputlnString(&temp)
 				}
 
-				if column != "0" {
+				if temp != "-1" {
 					itemsCopy = items.FilterBy(column, temp)
 					backToItems = ViewAllItems(&itemsCopy, title+fmt.Sprintf(" %s='%s'", column, temp))
 				} else {

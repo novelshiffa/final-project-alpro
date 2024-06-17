@@ -202,11 +202,11 @@ func ViewAllTransactions(t *types.Transactions, title string) bool {
 					}
 
 				} else {
-					fmt.Print(RightArrowedPrompt("Enter value to filter (0 to cancel): "))
+					fmt.Print(RightArrowedPrompt("Enter value to filter (-1 to cancel): "))
 					InputlnString(&temp)
 				}
 
-				if column != "0" {
+				if temp != "-1" {
 					transactionsCopy = t.FilterBy(column, temp)
 					backToTransactions = ViewAllTransactions(&transactionsCopy, title+fmt.Sprintf(" %s='%s'", column, temp))
 				} else {
