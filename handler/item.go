@@ -97,7 +97,7 @@ func AddNewItem(items *types.Items) {
 
 	prompt.SetValue(fmt.Sprintf("Enter item category %s: ", minusOneToCancel))
 	fmt.Print(rightArrowText.Colored + prompt.Colored)
-	fmt.Scanln(&p.Category)
+	InputlnString(&p.Category)
 
 	if p.Category == "-1" {
 		return
@@ -250,7 +250,7 @@ func EditItem(items *types.Items) {
 
 	fmt.Print(OldValueFormat(items.Items[index].Category))
 	fmt.Print(RightArrowedPrompt("Enter new category (Press Enter if you don't want to edit this attribute): "))
-	fmt.Scanln(&temp)
+	InputlnString(&temp)
 
 	if temp != "" {
 		items.Items[index].Category = temp
