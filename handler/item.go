@@ -75,7 +75,7 @@ func AddNewItem(items *types.Items) {
 	prompt.SetColor("white")
 
 	fmt.Print(rightArrowText.Colored + prompt.Colored)
-	fmt.Scanln(&p.Name)
+	InputlnString(&p.Name)
 
 	if p.Name == "-1" {
 		return
