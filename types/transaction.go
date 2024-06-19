@@ -31,6 +31,23 @@ func (t *Transactions) IsColumn(columnName string) bool {
 	return lowerCasedColumnName == "id" || lowerCasedColumnName == "time" || lowerCasedColumnName == "type" || lowerCasedColumnName == "itemid" || lowerCasedColumnName == "quantity"
 }
 
+// getMaxId mengembalikan ID maksimum dari semua item dalam struktur Items.
+// Fungsi ini digunakan untuk menentukan ID tertinggi di antara semua item yang ada.
+//
+// Return:
+// - int: ID maksimum dari semua item di dalam struktur Items.
+func (transactions *Transactions) getMaxId() int {
+	max := 0
+
+	for i := 0; i < transactions.Length; i++ {
+		if transactions.Items[i].Id > max {
+			max = transactions.Items[i].Id
+		}
+	}
+
+	return max
+}
+
 // isIdSorted memeriksa apakah daftar transaksi diurutkan berdasarkan Id.
 //
 // Parameter:
@@ -105,7 +122,7 @@ func (t *Transactions) CreateNew(transaction Transaction) {
 	}
 
 	t.Items[t.Length] = transaction
-	t.Items[t.Length].Id = t.Length + 1
+	t.Items[t.Length].Id = t.getMaxId() + 1
 	t.Length++
 }
 

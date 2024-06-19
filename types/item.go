@@ -46,6 +46,23 @@ func (items *Items) getMaxCharOnName() int {
 	return max
 }
 
+// getMaxId mengembalikan ID maksimum dari semua item dalam struktur Items.
+// Fungsi ini digunakan untuk menentukan ID tertinggi di antara semua item yang ada.
+//
+// Return:
+// - int: ID maksimum dari semua item di dalam struktur Items.
+func (items *Items) getMaxId() int {
+	max := 0
+
+	for i := 0; i < items.Length; i++ {
+		if items.Items[i].Id > max {
+			max = items.Items[i].Id
+		}
+	}
+
+	return max
+}
+
 // ShowInTable menampilkan semua item dalam struktur Items dalam format tabel yang terformat rapi ke dalam terminal.
 // Tabel mencakup kolom ID, Nama, Kategori, Harga, dan Stok untuk setiap item.
 // Panjang kolom Nama (Name) disesuaikan secara dinamis berdasarkan panjang maksimum nama item.
@@ -100,7 +117,7 @@ func (p *Items) AddNew(item Item) {
 
 	// Menambahkan item ke dalam array Items dan mengatur ID sesuai dengan urutan penambahan
 	p.Items[p.Length] = item
-	p.Items[p.Length].Id = p.Length + 1
+	p.Items[p.Length].Id = p.getMaxId() + 1
 	p.Length++
 }
 
